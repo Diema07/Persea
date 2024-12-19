@@ -1,45 +1,51 @@
+from google.oauth2 import id_token
+from google.auth.transport import requests
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Usuario
 from django.db import IntegrityError
-from django.http import JsonResponse
+from django.conf import settings
+
+CLIENT_ID = settings.GOOGLE_CLIENT_ID  # Obteniendo el clientID desde settings.py
 
 @api_view(['POST'])
 def google_login(request):
-    # Obtener los datos enviados desde el frontend (token de Google, nombre y correo)
-    data = request.data
-    google_id = data.get('googleId')  # ID de Google
-    name = data.get('name')  # Nombre del usuario
-    email = data.get('email')  # Correo electrónico del usuario
+    token = request.data.get('token')
 
-    if not google_id or not name or not email:
-        return Response({'error': 'Datos incompletos'}, status=400)
+    if not token:
+        return Response({'error': 'No se proporcionó ningún token'}, status=400)
 
-    # Verificar si el usuario ya existe en la base de datos
-    usuario = Usuario.objects.filter(correo=email).first()
+    try:
+        # Verificar el token de Google
+        idinfo = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
 
-    if not usuario:
-        # Si el usuario no existe, crearlo
-        try:
-            usuario = Usuario.objects.create(
-                nombreUsuario=name,
-                correo=email,
-                idGoogle=google_id
-            )
+        # Extraer información del usuario
+        google_id = idinfo['sub']
+        name = idinfo.get('name')
+        email = idinfo.get('email')
+
+        if not google_id or not name or not email:
+            return Response({'error': 'Datos incompletos del usuario'}, status=400)
+
+        # Buscar el usuario en la base de datos o crearlo
+        usuario, created = Usuario.objects.get_or_create(correo=email, defaults={
+            'nombreUsuario': name,
+            'idGoogle': google_id,
+        })
+
+        # Si el usuario existe pero el idGoogle ha cambiado, actualizarlo
+        if not created and usuario.idGoogle != google_id:
+            usuario.idGoogle = google_id
             usuario.save()
-        except IntegrityError:
-            return Response({'error': 'Error al crear el usuario'}, status=400)
 
-    # Si el usuario ya existe, actualizar el idGoogle si es diferente
-    elif usuario.idGoogle != google_id:
-        usuario.idGoogle = google_id
-        usuario.save()
+        return Response({
+            'message': 'Usuario autenticado correctamente',
+            'usuario': {
+                'nombreUsuario': usuario.nombreUsuario,
+                'correo': usuario.correo,
+                'idGoogle': usuario.idGoogle,
+            }
+        })
 
-    return Response({
-        'message': 'Usuario autenticado correctamente',
-        'usuario': {
-            'nombreUsuario': usuario.nombreUsuario,
-            'correo': usuario.correo,
-            'idGoogle': usuario.idGoogle
-        }
-    })
+    except ValueError:
+        return Response({'error': 'Token de Google inválido'}, status=400)
