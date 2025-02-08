@@ -6,6 +6,7 @@ export function Taskform() {
     const { register, handleSubmit, formState: { errors } } = useForm();
 
     const onSubmit = handleSubmit(async (data) => {
+        console.log('Datos enviados:', data);
         try {
             // Obtener el token de autenticación (por ejemplo, desde localStorage)
             const token = localStorage.getItem('token');

@@ -1,6 +1,8 @@
-from django.urls import path
-from .views import google_login
+# usuarios/urls.py
+from django.urls import path, include  # Importar include
+from .views import get_csrf_token  # Importar la vista
 
 urlpatterns = [
-    path('auth/google/', google_login, name='google-login'),  # URL para autenticación con Google
+    path('auth/', include('allauth.urls')),  # Rutas de allauth
+    path('get-csrf-token/', get_csrf_token, name='get_csrf_token'),  # Nueva ruta para obtener el token CSRF
 ]

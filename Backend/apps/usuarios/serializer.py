@@ -1,8 +1,9 @@
-# serializers.py en la app usuarios
-from rest_framework import serializers
-from .models import Usuario
+# usuarios/serializers.py
 
-class UsuarioSerializer(serializers.ModelSerializer):
+from django.contrib.auth.models import User
+from rest_framework import serializers
+
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Usuario
-        fields = ['nombreUsuario', 'correo', 'idGoogle']
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name']

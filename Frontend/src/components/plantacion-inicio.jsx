@@ -9,6 +9,7 @@ export function NombrePlantacion() {
         const fetchPlantaciones = async () => {
             try {
                 const token = localStorage.getItem('token');
+                console.log('Token obtenido:', token);
                 const config = {
                     headers: {
                         Authorization: `Bearer ${token}`,

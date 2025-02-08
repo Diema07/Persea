@@ -4,5 +4,5 @@ from .models import Plantacion
 class PlantacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Plantacion
-
-        fields = '__all__'
+        fields = ['id', 'nombreParcela', 'fechaPlantacion', 'estado', 'idUsuario']
+        read_only_fields = ['fechaPlantacion', 'estado', 'idUsuario']

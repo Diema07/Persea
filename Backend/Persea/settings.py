@@ -17,6 +17,9 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS_DEV')  # Hosts permitidos en desarrollo
 # Configuración de Google OAuth
 GOOGLE_CLIENT_ID = env('GOOGLE_CLIENT_ID')  # ID de cliente de Google para autenticación
 
+# Modelo de usuario personalizado
+AUTH_USER_MODEL = 'auth.User'
+
 # Aplicaciones instaladas
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -42,11 +45,14 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',  # Autenticación con Google
     'corsheaders',
+    'rest_framework.authtoken',
     'rest_framework'
 ]
 
 # Backends de autenticación
 AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',  # Autenticación con allauth
 )
 
@@ -60,12 +66,31 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 # Redirección después del login
-LOGIN_REDIRECT_URL = '/'  # Redirigir al inicio después de la autenticación
+LOGIN_REDIRECT_URL = 'http://localhost:3000/inicio-plantacion'
+LOGOUT_REDIRECT_URL = '/'
 
 # Configuración de CORS
+CORS_ALLOW_ALL_ORIGINS = True 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',  # Permitir solicitudes desde este origen
 ]
+
+CORS_ALLOW_CREDENTIALS = True  # Permitir el envío de cookies
+
+# Lista de orígenes confiables para redirecciones de autenticación
+ACCOUNT_AUTHENTICATED_REDIRECTS = True
+
+
+# Lista de orígenes confiables para redirecciones de autenticación
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',
+]
+
+#cookies
+CSRF_COOKIE_HTTPONLY = False  # Permite que JavaScript acceda a la cookie
+CSRF_COOKIE_SAMESITE = 'Lax'  # Necesario para solicitudes entre dominios
+CSRF_COOKIE_SECURE = False  # Establecer en True en producción con HTTPS
+
 
 # Middleware
 MIDDLEWARE = [
@@ -141,6 +166,18 @@ STATIC_URL = "static/"
 
 # Campo primario por defecto
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',  # Para autenticación por token
+        # Si usas JWT:
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',  # Requiere autenticación por defecto
+    ],
+}
+
 
 # Configuración para producción
 if not DEBUG:
