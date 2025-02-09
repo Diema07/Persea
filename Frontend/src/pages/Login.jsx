@@ -1,33 +1,51 @@
+// src/pages/Login.jsx
 import '../styles/login.css';
-import { GoogleLogin } from '@react-oauth/google';
-import axios from 'axios'; // Importar axios
-import { useNavigate, Link } from 'react-router-dom'; // Importar Link
-import Cookies from 'js-cookie'; // Importar js-cookie
-import { useEffect } from 'react'; // Importar useEffect
+import axios from 'axios';
+import { useNavigate, Link } from 'react-router-dom';
+import { useEffect } from 'react';
 
 export function Login() {
   const navigate = useNavigate();
 
-  // Función para obtener el token CSRF
+  // 1. Obtener CSRF Token
   const fetchCsrfToken = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/usuarios/get-csrf-token/', {
-        withCredentials: true, // Permitir el envío de cookies
-      });
-      console.log('Token CSRF obtenido:', response.data.csrfToken);
+      const response = await axios.get(
+        'http://localhost:8000/api/usuarios/get-csrf-token/', 
+        { withCredentials: true }
+      );
+      axios.defaults.headers.common['X-CSRFToken'] = response.data.csrfToken;
     } catch (error) {
-      console.error('Error al obtener el token CSRF:', error);
+      console.error('Error CSRF:', error);
     }
   };
 
-  // Obtener el token CSRF cuando el componente se monta
+  // 2. Obtener Token de autenticación después de Google Login
+  const checkAuthStatus = async () => {
+    try {
+      const response = await axios.get(
+        'http://localhost:8000/api/usuarios/get_user_token/',
+        { withCredentials: true }
+      );
+      
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        navigate('/inicio-plantacion');
+      }
+    } catch (error) {
+      console.log('Usuario no autenticado');
+    }
+  };
+
   useEffect(() => {
     fetchCsrfToken();
+    checkAuthStatus();
   }, []);
 
+  // 3. Login con Google
   const handleGoogleLogin = () => {
-    // Redirigir al usuario a la URL de inicio de sesión de Google proporcionada por allauth
-    window.location.href = 'http://localhost:8000/accounts/google/login/';
+    window.location.href = 
+      'http://localhost:8000/accounts/google/login/?process=login&redirect_uri=http://localhost:3000/inicio-plantacion';
   };
 
   return (
@@ -35,7 +53,9 @@ export function Login() {
       <div className="login-box">
         <div className="login-split">
           <div className="login-left">
-            <img src="https://www.frutas-hortalizas.com/img/fruites_verdures/presentacio/86.jpg" alt="Decoración" className="side-image" />
+            <img src="https://www.frutas-hortalizas.com/img/fruites_verdures/presentacio/86.jpg" 
+                 alt="Decoración" 
+                 className="side-image" />
           </div>
           <div className="login-right">
             <div className="login-logo">

@@ -7,30 +7,29 @@ export function NombrePlantacion() {
 
     useEffect(() => {
         const fetchPlantaciones = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                console.log('Token obtenido:', token);
-                const config = {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                };
-                const response = await getAllTasks(config);
-                setPlantaciones(response.data);
-            } catch (error) {
-                console.error('Error al obtener las plantaciones:', error);
-            }
+          try {
+            const token = localStorage.getItem('token');
+            const config = {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            };
+            const response = await getAllTasks(config); // Asegúrate que getAllTasks use la config
+            setPlantaciones(response.data);
+          } catch (error) {
+            console.error('Error al obtener plantaciones:', error);
+          }
         };
-
+      
         fetchPlantaciones();
-    }, []);
+      }, []);
 
     return (
         <div>
             <h2>Mis Plantaciones</h2>
             <ul>
                 {plantaciones.map((plantacion) => (
-                    <li key={plantacion.id}>{plantacion.nombre}</li>
+                        <li key={plantacion.id}>{plantacion.nombreParcela}</li>
                 ))}
             </ul>
             <Link to="/plantacion" className="omit-button">Crear Plantación</Link>

@@ -4,6 +4,7 @@ from django.urls import path, include
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('accounts/', include('allauth.urls')),  # Incluir las rutas de allauth
+    path('accounts/google/login/', include('allauth.socialaccount.providers.google.urls')),
 
     path('api/usuarios/', include('apps.usuarios.urls')),  # Incluir rutas de la app usuarios
     path('plantaciones/', include('apps.plantaciones.urls')), #Incluir rutas de la app plantaciones

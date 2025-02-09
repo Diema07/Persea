@@ -1,27 +1,45 @@
 import { useForm } from 'react-hook-form';
 import { createTask } from '../api/plantaciones.api';
-import axios from 'axios';
+import { useState } from 'react'; // Importar useState para manejar errores
 
 export function Taskform() {
     const { register, handleSubmit, formState: { errors } } = useForm();
+    const [errorMessage, setErrorMessage] = useState(null); // Estado para mensajes de error
 
     const onSubmit = handleSubmit(async (data) => {
-        console.log('Datos enviados:', data);
         try {
-            // Obtener el token de autenticación (por ejemplo, desde localStorage)
             const token = localStorage.getItem('token');
+            console.log('Datos enviados:', data);
+            
+            if (!token) {
+                throw new Error('No hay token de autenticación. Por favor inicia sesión nuevamente.');
+            }
 
-            // Configurar axios para incluir el token en el encabezado
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+            // Cambiar el nombre del campo a 'nombreParcela' que espera el backend
+            const formattedData = {
+                nombreParcela: data.nombre
             };
 
-            // Enviar la solicitud con el token de autenticación
-            await createTask(data, config);
+            const response = await createTask(formattedData, {
+                headers: { 
+                    Authorization: `Token ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            console.log('Plantación creada:', response.data);
+            setErrorMessage(null); // Limpiar mensajes de error si tiene éxito
+            
+            // Redirigir o actualizar la lista después de crear
+            window.location.href = '/inicio-plantacion';
+            
         } catch (error) {
             console.error('Error al crear la plantación:', error);
+            setErrorMessage(
+                error.response?.data?.detail || 
+                error.message || 
+                'Error al crear la plantación. Por favor intenta nuevamente.'
+            );
         }
     });
 
@@ -31,11 +49,24 @@ export function Taskform() {
                 <h2>Nombre de tu parcela</h2>
                 <input
                     type="text"
-                    placeholder="nombre"
-                    {...register("nombre", { required: true })}
+                    placeholder="Nombre de la parcela"
+                    {...register("nombre", { 
+                        required: "Este campo es obligatorio",
+                        minLength: {
+                            value: 3,
+                            message: "El nombre debe tener al menos 3 caracteres"
+                        }
+                    })}
                 />
-                {errors.nombre && <span>Requerido</span>}
-                <button>Crear</button>
+                {errors.nombre && <span style={{color: 'red'}}>{errors.nombre.message}</span>}
+                
+                <button type="submit">Crear</button>
+                
+                {errorMessage && (
+                    <div style={{color: 'red', marginTop: '10px'}}>
+                        {errorMessage}
+                    </div>
+                )}
             </form>
         </div>
     );

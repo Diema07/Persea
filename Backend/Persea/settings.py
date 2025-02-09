@@ -88,8 +88,10 @@ CSRF_TRUSTED_ORIGINS = [
 
 #cookies
 CSRF_COOKIE_HTTPONLY = False  # Permite que JavaScript acceda a la cookie
-CSRF_COOKIE_SAMESITE = 'Lax'  # Necesario para solicitudes entre dominios
-CSRF_COOKIE_SECURE = False  # Establecer en True en producción con HTTPS
+SESSION_COOKIE_SAMESITE = 'None' if DEBUG else 'Lax'
+CSRF_COOKIE_SAMESITE = 'None' if DEBUG else 'Lax'
+SESSION_COOKIE_SECURE = False  # True en producción
+CSRF_COOKIE_SECURE = False      # True en producción
 
 
 # Middleware
@@ -170,8 +172,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',  # Para autenticación por token
-        # Si usas JWT:
-        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',  # Requiere autenticación por defecto
