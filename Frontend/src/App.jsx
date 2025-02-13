@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Login } from './pages/Login';
 import { NombrePlantacion } from './components/plantacion-inicio';
 import {Taskform} from './pages/plantacion';
+import { InicioPlantacion } from "./pages/inicio-plantacion";
 
 function App(){
   return(
@@ -11,6 +12,7 @@ function App(){
           <Route path='/Login' element={<Login/>} />
           <Route path='/inicio-plantacion' element={<NombrePlantacion/>} />
           <Route path="/plantacion" element={<Taskform />} />
+          <Route path="/plantacion/inicio" element={<InicioPlantacion />} />
       </Routes>
     </BrowserRouter>
   );

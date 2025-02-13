@@ -1,6 +1,5 @@
 import { useForm } from 'react-hook-form';
 import { createTask } from '../api/plantaciones.api';
-import axios from 'axios';
 
 export function Taskform() {
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -8,18 +7,9 @@ export function Taskform() {
     const onSubmit = handleSubmit(async (data) => {
         console.log('Datos enviados:', data);
         try {
-            // Obtener el token de autenticación (por ejemplo, desde localStorage)
-            const token = localStorage.getItem('token');
-
-            // Configurar axios para incluir el token en el encabezado
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            };
-
-            // Enviar la solicitud con el token de autenticación
-            await createTask(data, config);
+            // No es necesario manejar tokens ni agregar encabezados
+            await createTask(data);
+            //window.location.href = '/inicio-plantacion';
         } catch (error) {
             console.error('Error al crear la plantación:', error);
         }

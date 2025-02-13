@@ -44,8 +44,7 @@ export function Login() {
             <button onClick={handleGoogleLogin} className="google-login-button">
               Iniciar sesión con Google
             </button>
-            <div className="separator">--- o ---</div>
-            <Link to="/inicio-plantacion" className="omit-button">Omitir</Link>
+            
           </div>
         </div>
       </div>

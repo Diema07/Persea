@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Configuración de seguridad
 SECRET_KEY = os.environ.get('SECRET_KEY')  # Clave secreta para la seguridad de la aplicación
-DEBUG = os.environ.get('DEBUG')  # Modo de depuración (True/False)
+DEBUG = env.bool('DEBUG', default=False)  # Modo de depuración (True/False)
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS_DEV')  # Hosts permitidos en desarrollo
 
 # Configuración de Google OAuth
@@ -51,7 +51,6 @@ INSTALLED_APPS = [
 
 # Backends de autenticación
 AUTHENTICATION_BACKENDS = (
-    # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',  # Autenticación con allauth
 )
@@ -80,17 +79,20 @@ CORS_ALLOW_CREDENTIALS = True  # Permitir el envío de cookies
 # Lista de orígenes confiables para redirecciones de autenticación
 ACCOUNT_AUTHENTICATED_REDIRECTS = True
 
-
-# Lista de orígenes confiables para redirecciones de autenticación
+# Configuración CSRF
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
 ]
 
-#cookies
-CSRF_COOKIE_HTTPONLY = False  # Permite que JavaScript acceda a la cookie
-CSRF_COOKIE_SAMESITE = 'Lax'  # Necesario para solicitudes entre dominios
-CSRF_COOKIE_SECURE = False  # Establecer en True en producción con HTTPS
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000',  # Asegúrate de que tu frontend esté en la lista blanca
+]
 
+# Cookies
+CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SECURE = not DEBUG  # Establecer en True en producción con HTTPS
+SESSION_COOKIE_HTTPONLY = True
 
 # Middleware
 MIDDLEWARE = [
@@ -156,10 +158,10 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Internacionalización
-LANGUAGE_CODE = "es"  # Idioma predeterminado
-TIME_ZONE = 'America/Bogota'  # Zona horaria
-USE_I18N = True  # Habilitar internacionalización
-USE_TZ = True  # Usar zona horaria
+LANGUAGE_CODE = "es"
+TIME_ZONE = 'America/Bogota'
+USE_I18N = True
+USE_TZ = True
 
 # Archivos estáticos
 STATIC_URL = "static/"
@@ -167,17 +169,15 @@ STATIC_URL = "static/"
 # Campo primario por defecto
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Configuración de Django REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',  # Para autenticación por token
-        # Si usas JWT:
-        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',  # Autenticación por sesión
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',  # Requiere autenticación por defecto
+        'rest_framework.permissions.IsAuthenticated',  # Solo usuarios autenticados pueden acceder
     ],
 }
-
 
 # Configuración para producción
 if not DEBUG:
