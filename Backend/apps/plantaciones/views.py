@@ -13,8 +13,9 @@ class PlantacionView(viewsets.ModelViewSet):
             return Plantacion.objects.filter(idUsuario=self.request.user)
         return Plantacion.objects.none()  # No devuelve nada si no está autenticado
 
-    def perform_create(self, serializer):
+    def create(self, request):
         if self.request.user.is_authenticated:
+            print(f"self.request.user ={self.request.user}")
             serializer.save(idUsuario=self.request.user)
         else:
             raise PermissionError("El usuario no está autenticado.")

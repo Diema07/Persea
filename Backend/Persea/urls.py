@@ -13,3 +13,4 @@ urlpatterns = [
     path('mantenimiento/', include('apps.mantenimiento.urls')),  # Incluir rutas de la app mantenimiento
     path('informes/', include('apps.informes.urls'))  # Incluir rutas de la app informes
 ]
+
