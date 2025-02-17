@@ -9,7 +9,7 @@ export function Taskform() {
         try {
             // No es necesario manejar tokens ni agregar encabezados
             await createTask(data);
-            //window.location.href = '/inicio-plantacion';
+            window.location.href = '/inicio-plantacion';
         } catch (error) {
             console.error('Error al crear la plantación:', error);
         }
@@ -22,7 +22,7 @@ export function Taskform() {
                 <input
                     type="text"
                     placeholder="nombre"
-                    {...register("nombre", { required: true })}
+                    {...register("nombreParcela", { required: true })}
                 />
                 {errors.nombre && <span>Requerido</span>}
                 <button>Crear</button>
