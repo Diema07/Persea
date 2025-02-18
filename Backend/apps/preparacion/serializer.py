@@ -6,6 +6,7 @@ class PreparacionTerrenoSerializer(serializers.ModelSerializer):
         model = PreparacionTerreno
         fields = '__all__'
 
+
 class SeleccionArbolesSerializer(serializers.ModelSerializer):
     class Meta:
         model = SeleccionArboles
