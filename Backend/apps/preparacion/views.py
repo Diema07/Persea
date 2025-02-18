@@ -3,11 +3,14 @@
 from django.utils import timezone
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import SessionAuthentication
 from .serializer import PreparacionTerrenoSerializer, SeleccionArbolesSerializer
 from .models import PreparacionTerreno, SeleccionArboles
 
 class PreparacionTerrenoView(viewsets.ModelViewSet):
     serializer_class = PreparacionTerrenoSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         # Devuelve solo los registros vinculados a las plantaciones del usuario autenticado.
@@ -39,6 +42,7 @@ class PreparacionTerrenoView(viewsets.ModelViewSet):
 
 class SeleccionArbolesView(viewsets.ModelViewSet):
     serializer_class = SeleccionArbolesSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         # Devuelve solo los registros vinculados a las plantaciones del usuario autenticado.
