@@ -31,3 +31,5 @@ export const createTask = async (task) => {
         console.error('Error al crear la plantación:', error.response?.data || error);
     }
 };
+
+export const getPlantacionById = (id)=> taskAPI.get('/${id}');
