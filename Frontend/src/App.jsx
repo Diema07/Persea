@@ -1,10 +1,10 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, } from 'react-router-dom';
 import { Login } from './pages/Login';
 import { PlantacionInicio } from './components/plantacion-inicio';
 import { Taskform } from './pages/plantacion';
 import { InicioPlantacion } from "./pages/inicio-plantacion";
 import { PlantacionDetalle } from './pages/plantacionDetalle';
-import { Preparacion } from './pages/preparacionTerreno';
+import { PreparacionTerrenoPage } from './pages/preparacionTerreno';
 
 function App() {
   return (
@@ -16,7 +16,7 @@ function App() {
         <Route path="/plantacion" element={<Taskform />} />
         <Route path="/plantacion/inicio" element={<InicioPlantacion />} />
         <Route path="/plantacion/:idPlantacion" element={<PlantacionDetalle />} />
-        <Route path="/preparacion/:id" element={<Preparacion />} />
+        <Route path="/preparacion/:id" element={<PreparacionTerrenoPage />} />
       </Routes>
     </BrowserRouter>
   );
