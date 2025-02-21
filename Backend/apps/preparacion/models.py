@@ -12,7 +12,16 @@ class PreparacionTerreno(models.Model):
         return f"Preparación de {self.idPlantacion.nombreParcela}"
 
 class SeleccionArboles(models.Model):
-    seleccionVariedades = models.CharField(max_length=30,blank=True)
+    VARIEDADES_CHOICES = [
+        ('aguacate hass', 'Aguacate Hass'),
+        ('aguacate criollo', 'Aguacate Criollo'),
+        ('aguacate papelillo', 'Aguacate Papelillo'),
+    ]
+
+    seleccionVariedades = models.CharField(
+        max_length=50,
+        choices=VARIEDADES_CHOICES
+    )
     preparacionColinos = models.DateField(null=True, blank=True)
     excavacionHoyos = models.DateField(null=True, blank=True)
     plantacion = models.DateField(null=True, blank=True)
@@ -20,3 +29,4 @@ class SeleccionArboles(models.Model):
 
     def __str__(self):
         return f"Selección de árboles para {self.idPlantacion.nombreParcela}"
+    

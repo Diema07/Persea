@@ -18,10 +18,7 @@ class MantenimientoMonitoreo(models.Model):
     guadaña = models.DateField()
     necesidadArboles = models.CharField(max_length=30)
     tipoTratamiento = models.CharField(max_length=30)
-    estadoPlantaTratamiento = models.CharField(max_length=30)
     fechaAplicacionTratamiento = models.DateField()
-    observacionEvolucionPlanta = models.CharField(max_length=30)
-    fechaSeguimiento = models.DateField()
     idPlantacion = models.ForeignKey('plantaciones.Plantacion', on_delete=models.CASCADE, related_name='mantenimiento')
 
     def __str__(self):

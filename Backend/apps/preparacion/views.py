@@ -15,8 +15,16 @@ class PreparacionTerrenoView(viewsets.ModelViewSet):
     def get_queryset(self):
         # Devuelve solo los registros vinculados a las plantaciones del usuario autenticado.
         if self.request.user.is_authenticated:
-            return PreparacionTerreno.objects.filter(idPlantacion__idUsuario=self.request.user)
+            queryset = PreparacionTerreno.objects.filter(idPlantacion__idUsuario=self.request.user)
+
+            # Filtrar por el ID de la plantación si está presente en los parámetros
+            plantacion_id = self.request.query_params.get('plantacionId', None)
+            if plantacion_id:
+                queryset = queryset.filter(idPlantacion__id=plantacion_id)
+
+            return queryset
         return PreparacionTerreno.objects.none()
+
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
