@@ -23,6 +23,13 @@ export function SeleccionArbolesForm({ plantacionId, seleccionId }) {
   const watchCheckHoyos = watch('checkHoyos');
   const watchCheckPlantacion = watch('checkPlantacion');
 
+  // Opciones de variedades de aguacate
+  const variedades = [
+    { value: 'aguacate hass', label: 'Aguacate Hass' },
+    { value: 'aguacate criollo', label: 'Aguacate Criollo' },
+    { value: 'aguacate papelillo', label: 'Aguacate Papelillo' },
+  ];
+
   // Al montar, obtenemos los datos existentes
   useEffect(() => {
     async function fetchData() {
@@ -41,6 +48,7 @@ export function SeleccionArbolesForm({ plantacionId, seleccionId }) {
           setValue('checkColinos', !!seleccion.preparacionColinos);
           setValue('checkHoyos', !!seleccion.excavacionHoyos);
           setValue('checkPlantacion', !!seleccion.plantacion);
+          setValue('seleccionVariedades', seleccion.seleccionVariedades); // Establecer la variedad seleccionada
 
           // Deshabilitar checkboxes si el campo ya está registrado
           setIsCheckboxDisabled({
@@ -117,8 +125,24 @@ export function SeleccionArbolesForm({ plantacionId, seleccionId }) {
     <div>
       <h3>Agregar Selección de Árboles</h3>
       <form onSubmit={onSubmit}>
+        {/* SELECT: Selección de variedades */}
+        <div style={{ marginBottom: '16px' }}>
+          <label htmlFor="seleccionVariedades">Seleccione la variedad de aguacate:</label>
+          <select
+            id="seleccionVariedades"
+            {...register('seleccionVariedades')}
+            style={{ marginLeft: '8px' }}
+            required
+          >
+            <option value="">-- Seleccione una opción --</option>
+            {variedades.map((variedad) => (
+              <option key={variedad.value} value={variedad.value}>
+                {variedad.label}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      
         {/* CHECKBOX 1: Preparación de colinos */}
         <div style={{ marginBottom: '8px' }}>
           <input
@@ -163,8 +187,6 @@ export function SeleccionArbolesForm({ plantacionId, seleccionId }) {
             </span>
           )}
         </div>
-
-  
 
         <button style={{ marginTop: '16px' }}>Listo</button>
       </form>

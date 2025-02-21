@@ -43,7 +43,7 @@ export function SeleccionArbolesPage() {
         onCreated={loadSelecciones}
       />
 
-      {/* Listado de selecciones (historial) */}
+      {/* Listado de selecciones (historial)
       <h3>Historial de Selecciones:</h3>
       {selecciones.length === 0 ? (
         <p>No hay selecciones registradas.</p>
@@ -60,7 +60,7 @@ export function SeleccionArbolesPage() {
             </li>
           ))}
         </ul>
-      )}
+      )} */}
     </div>
   );
 }

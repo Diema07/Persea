@@ -21,9 +21,9 @@ function App() {
         <Route path="/plantacion/inicio" element={<InicioPlantacion />} />
         <Route path="/preparacion/:plantacionId" element={<PreparacionTerrenoPage />} />
         <Route path="/seleccion-arboles/:plantacionId" element={<SeleccionArbolesPage />} />
-        <Route path="/riego-fertilizacion/:idPlantacion" element={<RiegoFertilizacionPage />} />
-        <Route path="/mantenimiento/:idPlantacion" element={<MantenimientoMonitoreoPage />} />
-        <Route path="/poda/:idPlantacion" element={<PodaPage />} />
+        <Route path="/riego-fertilizacion/:plantacionId" element={<RiegoFertilizacionPage />} />
+        <Route path="/mantenimiento-monitoreo/:plantacionId" element={<MantenimientoMonitoreoPage />} />
+        <Route path="/poda/:plantacionId" element={<PodaPage />} />
 
 
       </Routes>

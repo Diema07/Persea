@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import {getPreparacionByPlantacionId,} from '../api/preparacionTerreno.api';
 import { PreparacionTerrenoForm } from '../components/preparacionTerrenoForm';
 
@@ -7,6 +7,8 @@ export function PreparacionTerrenoPage() {
   const { plantacionId } = useParams();
   const idPlantacion = Number(plantacionId); // Convierte plantacionId a número
   const [preparaciones, setPreparaciones] = useState([]);
+  const navigate = useNavigate(); // Hook para redireccionar
+
 
   // Cargar las preparaciones existentes
   const loadPreparaciones = async () => {
@@ -31,6 +33,12 @@ export function PreparacionTerrenoPage() {
   // Obtener el ID de la primera preparación (si existe)
   const preparacionId = preparaciones.length > 0 ? preparaciones[0].id : null;
 
+  // Función para redirigir a la página de selección de árboles
+  const handleRedirectToSeleccionArboles = () => {
+    navigate(`/seleccion-arboles/${idPlantacion}`); // Cambia la ruta según tu configuración
+  };
+
+
   return (
     <div>
       <h2>Preparación de Terreno - Plantación {idPlantacion}</h2>
@@ -41,6 +49,22 @@ export function PreparacionTerrenoPage() {
         preparacionId={preparacionId}
         onCreated={loadPreparaciones}
       />
+
+      {/* Botón para redirigir a la página de selección de árboles */}
+      <button
+        onClick={handleRedirectToSeleccionArboles}
+        style={{
+          marginBottom: '16px',
+          padding: '8px 16px',
+          backgroundColor: '#007bff',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+        }}
+      >
+        Ir a Selección de Árboles
+      </button>
 
       {/* Listado de preparaciones (historial) */}
       {/* <h3>Historial de Preparaciones:</h3>

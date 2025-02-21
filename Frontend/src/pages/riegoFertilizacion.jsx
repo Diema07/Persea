@@ -1,66 +1,116 @@
-// src/pages/RiegoFertilizacionPage.jsx
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getRiegoByPlantacionId } from '../api/riegoFertilizacion.api';
-import {RiegoFertilizacionForm} from '../components/riegoFertilizacionForm';
+import { RiegoFertilizacionForm } from '../components/riegoFertilizacionForm';
 
 export function RiegoFertilizacionPage() {
-  const { idPlantacion } = useParams();
+  const { plantacionId } = useParams();
+  const idPlantacion = Number(plantacionId);
   const [riegoList, setRiegoList] = useState([]);
   const [idRiegoEdit, setIdRiegoEdit] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    loadData();
-  }, [idPlantacion]);
-
-  const loadData = async () => {
-    if (!idPlantacion) return;
+  // Carga los registros de Riego/Fertilización existentes
+  const loadRiegoFertilizacion = async () => {
+    if (!idPlantacion) {
+      setError("plantacionId es undefined o no es un número");
+      return;
+    }
+    setLoading(true);
     try {
       const data = await getRiegoByPlantacionId(idPlantacion);
       setRiegoList(data || []);
+      setError(null);
     } catch (error) {
       console.error('Error al obtener Riego/Fertilización:', error);
+      setError('Error al cargar los datos. Intente nuevamente.');
+    } finally {
+      setLoading(false);
     }
   };
 
+  // Cargar datos al montar la página
+  useEffect(() => {
+    if (idPlantacion) {
+      loadRiegoFertilizacion();
+    }
+  }, [idPlantacion]);
+
   // Cuando se guarde un registro, recargamos y cerramos el formulario
   const handleUpdated = () => {
-    loadData();
+    loadRiegoFertilizacion();
     setIdRiegoEdit(null);
   };
 
+  // Botón para ir a Mantenimiento/Monitoreo
+  const handleRedirectToMantenimiento = () => {
+    navigate(`/mantenimiento-monitoreo/${idPlantacion}`);
+  };
+
+  // Botón para ir a Poda
+  const handleRedirectToPoda = () => {
+    navigate(`/poda/${idPlantacion}`);
+  };
+
   return (
-    <div style={{ padding: '16px' }}>
+    <div className="riego-fertilizacion-container">
       <h2>Riego y Fertilización - Plantación {idPlantacion}</h2>
 
-      {riegoList.length === 0 ? (
+      {/* Mostrar mensaje de error si existe */}
+      {error && <p className="error-message">{error}</p>}
+
+      {/* Formulario para crear o editar registros */}
+      <RiegoFertilizacionForm
+        plantacionId={idPlantacion}
+        riegoId={idRiegoEdit}
+        onCreated={handleUpdated}
+      />
+
+      {/* Botones de redirección */}
+      <div className="button-group">
+        <button
+          onClick={handleRedirectToMantenimiento}
+          className="action-button"
+        >
+          Ir a Mantenimiento/Monitoreo
+        </button>
+        <button
+          onClick={handleRedirectToPoda}
+          className="action-button"
+        >
+          Ir a Poda
+        </button>
+      </div>
+
+      {/* Historial de Riego/Fertilización */}
+      <h3>Historial de Riego/Fertilización:</h3>
+      {loading ? (
+        <p>Cargando...</p>
+      ) : riegoList.length === 0 ? (
         <p>No hay registros de Riego/Fertilización.</p>
       ) : (
-        <ul>
+        <ul className="riego-list">
           {riegoList.map((r) => (
-            <li key={r.id} style={{ marginBottom: '12px' }}>
+            <li key={r.id} className="riego-item">
               <p><strong>ID:</strong> {r.id}</p>
-              <p><strong>Tipo de Riego:</strong> {r.tipoRiego}</p>
               <p><strong>Fecha Riego:</strong> {r.fechaRiego || '---'}</p>
-              <p><strong>Método Aplicación:</strong> {r.metodoAplicacionFertilizante}</p>
-              <p><strong>Tipo Fertilizante:</strong> {r.tipoFertilizante}</p>
-              <p><strong>Nombre Fertilizante:</strong> {r.nombreFertilizante}</p>
-              <p><strong>Cantidad:</strong> {r.cantidadFertilizante} {r.medidaFertilizante}</p>
-              <p><strong>Fecha Fertilizante:</strong> {r.fechaFertilizante || '---'}</p>
-              <button onClick={() => setIdRiegoEdit(r.id)}>
+              <p><strong>Fecha Fertilización:</strong> {r.fechaFertilizacion || '---'}</p>
+              <p><strong>Tipo de Riego:</strong> {r.tipoRiego || '---'}</p>
+              <p><strong>Método de Aplicación:</strong> {r.metodoAplicacionFertilizante || '---'}</p>
+              <p><strong>Tipo de Fertilizante:</strong> {r.tipoFertilizante || '---'}</p>
+              <p><strong>Nombre del Fertilizante:</strong> {r.nombreFertilizante || '---'}</p>
+              <p><strong>Cantidad de Fertilizante:</strong> {r.cantidadFertilizante || '---'} {r.medidaFertilizante || ''}</p>
+              <button
+                onClick={() => setIdRiegoEdit(r.id)}
+                className="edit-button"
+              >
                 Editar
               </button>
             </li>
           ))}
         </ul>
-      )}
-
-      {/* Si se selecciona un registro para editar, muestra el formulario */}
-      {idRiegoEdit && (
-        <RiegoFertilizacionForm
-          idRiego={idRiegoEdit}
-          onUpdated={handleUpdated}
-        />
       )}
     </div>
   );

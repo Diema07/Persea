@@ -1,18 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getMantenimientoByPlantacionId } from '../api/mantenimientoMonitoreo.api';
 import { MantenimientoMonitoreoForm } from '../components/mantenimientoMonitoreoForm';
 
 export function MantenimientoMonitoreoPage() {
-  const { idPlantacion } = useParams();
+  const { plantacionId } = useParams();
+  const idPlantacion = Number(plantacionId);
   const [mantenimientos, setMantenimientos] = useState([]);
+  const navigate = useNavigate();
 
   // Carga los mantenimientos existentes
   const loadMantenimientos = async () => {
+    if (!idPlantacion) {
+      console.error("plantacionId es undefined o no es un número");
+      return;
+    }
     try {
-      const response = await getMantenimientoByPlantacionId(idPlantacion);
-      // Suponiendo que tu API retorna algo como response.data
-      setMantenimientos(response.data || []);
+      const data = await getMantenimientoByPlantacionId(idPlantacion);
+      setMantenimientos(data);
     } catch (error) {
       console.error('Error al obtener mantenimientos:', error);
     }
@@ -24,17 +29,61 @@ export function MantenimientoMonitoreoPage() {
     }
   }, [idPlantacion]);
 
+  // Obtener el ID del primer mantenimiento (si existe)
+  const mantenimientoId = mantenimientos.length > 0 ? mantenimientos[0].id : null;
+
+  // (Opcional) Botón para ir a Selección de Árboles
+  const handleRedirectToRiegoFertilizacion = () => {
+    navigate(`/riego-fertilizacion/${idPlantacion}`);
+  };
+
+  const handleRedirectTopoda = () => {
+    navigate(`/poda/${idPlantacion}`);
+  };
+
+
   return (
     <div>
       <h2>Mantenimiento/Monitoreo - Plantación {idPlantacion}</h2>
 
       {/* Formulario con checkboxes y fechas automáticas */}
       <MantenimientoMonitoreoForm
-        idPlantacion={idPlantacion}
+        plantacionId={idPlantacion}
+        mantenimientoId={mantenimientoId}
         onCreated={loadMantenimientos}
       />
 
-      {/* Listado de mantenimientos (historial) */}
+      <button
+        onClick={handleRedirectToRiegoFertilizacion}
+        style={{
+          marginBottom: '16px',
+          padding: '8px 16px',
+          backgroundColor: '#007bff',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+        }}
+      >
+        Ir a Riego fertilizacion 
+      </button>
+
+      <button
+        onClick={handleRedirectTopoda}
+        style={{
+          marginBottom: '16px',
+          padding: '8px 16px',
+          backgroundColor: '#007bff',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+        }}
+      >
+        Ir a Riego poda 
+      </button>
+
+      {/* (Opcional) Historial de Mantenimientos */}
       <h3>Historial de Mantenimientos:</h3>
       {mantenimientos.length === 0 ? (
         <p>No hay mantenimientos registrados.</p>
@@ -43,13 +92,10 @@ export function MantenimientoMonitoreoPage() {
           {mantenimientos.map((m) => (
             <li key={m.id}>
               <strong>ID:</strong> {m.id} <br />
-              <strong>Guadaña:</strong> {m.guadaña || '---'} <br />
+              <strong>Guadaña:</strong> {m.guadana || '---'} <br />
               <strong>Necesidad de Árboles:</strong> {m.necesidadArboles || '---'} <br />
               <strong>Tipo Tratamiento:</strong> {m.tipoTratamiento || '---'} <br />
-              <strong>Estado Planta:</strong> {m.estadoPlantaTratamiento || '---'} <br />
               <strong>Fecha Aplicación:</strong> {m.fechaAplicacionTratamiento || '---'} <br />
-              <strong>Observación Evolución:</strong> {m.observacionEvolucionPlanta || '---'} <br />
-              <strong>Fecha Seguimiento:</strong> {m.fechaSeguimiento || '---'} <br />
               <hr />
             </li>
           ))}

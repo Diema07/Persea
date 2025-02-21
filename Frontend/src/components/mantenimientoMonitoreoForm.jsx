@@ -1,9 +1,12 @@
 // src/components/MantenimientoMonitoreoForm.jsx
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { patchMantenimientoMonitoreo } from '../api/mantenimientoMonitoreo.api';
+import {
+  getMantenimientoByPlantacionId,
+  postMantenimientoMonitoreo
+} from '../api/mantenimientoMonitoreo.api';
 
-export function MantenimientoMonitoreoForm({ mantenimientoId }) {
+export function MantenimientoMonitoreoForm({ plantacionId, onCreated }) {
   const {
     register,
     handleSubmit,
@@ -12,21 +15,61 @@ export function MantenimientoMonitoreoForm({ mantenimientoId }) {
     formState: { errors },
   } = useForm();
 
-  // Observamos checkboxes para asignar fecha actual o null
+  // Estado para controlar si los checkboxes están deshabilitados
+  const [isCheckboxDisabled, setIsCheckboxDisabled] = useState({
+    guadana: false,
+    aplicacion: false,
+  });
+
+  // Observar checkboxes
   const watchCheckGuadana = watch('checkGuadana');
   const watchCheckAplicacion = watch('checkAplicacion');
-  const watchCheckSeguimiento = watch('checkSeguimiento');
 
-  // Cada vez que cambie el checkbox de 'checkGuadana', ponemos la fecha de hoy o null
+  // Al montar, obtenemos si ya existe un registro (opcional)
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const plantacionIdNumber = Number(plantacionId);
+        if (isNaN(plantacionIdNumber)) {
+          throw new Error("plantacionId debe ser un número");
+        }
+
+        const data = await getMantenimientoByPlantacionId(plantacionIdNumber);
+
+        // Si hay un registro existente, puedes usarlo para deshabilitar checkboxes
+        // o mostrar un mensaje. Opcional:
+        if (data && data.length > 0) {
+          const mantenimiento = data[0];
+
+          // Asignar checkboxes si ya tienen fecha
+          setValue('checkGuadana', !!mantenimiento.guadana);
+          setValue('checkAplicacion', !!mantenimiento.fechaAplicacionTratamiento);
+
+          setIsCheckboxDisabled({
+            guadana: !!mantenimiento.guadaña,
+            aplicacion: !!mantenimiento.fechaAplicacionTratamiento,
+          });
+
+          // Prellenar campos de texto si quieres
+          setValue('necesidadArboles', mantenimiento.necesidadArboles || '');
+          setValue('tipoTratamiento', mantenimiento.tipoTratamiento || '');
+        }
+      } catch (error) {
+        console.error('Error al cargar el mantenimiento/monitoreo:', error);
+      }
+    }
+    fetchData();
+  }, [plantacionId, setValue]);
+
+  // Cada vez que cambie un checkbox, asignamos fecha de hoy o null
   useEffect(() => {
     if (watchCheckGuadana) {
-      setValue('guadaña', new Date().toISOString().split('T')[0]);
+      setValue('guadana', new Date().toISOString().split('T')[0]);
     } else {
-      setValue('guadaña', null);
+      setValue('guadana', null);
     }
   }, [watchCheckGuadana, setValue]);
 
-  // Cada vez que cambie 'checkAplicacion', asignamos fecha actual o null a 'fechaAplicacionTratamiento'
   useEffect(() => {
     if (watchCheckAplicacion) {
       setValue('fechaAplicacionTratamiento', new Date().toISOString().split('T')[0]);
@@ -35,28 +78,38 @@ export function MantenimientoMonitoreoForm({ mantenimientoId }) {
     }
   }, [watchCheckAplicacion, setValue]);
 
-  // Cada vez que cambie 'checkSeguimiento', asignamos fecha actual o null a 'fechaSeguimiento'
-  useEffect(() => {
-    if (watchCheckSeguimiento) {
-      setValue('fechaSeguimiento', new Date().toISOString().split('T')[0]);
-    } else {
-      setValue('fechaSeguimiento', null);
-    }
-  }, [watchCheckSeguimiento, setValue]);
-
-  // Manejo del submit
+  // Manejo del submit: CREAR (POST) un nuevo mantenimiento
   const onSubmit = handleSubmit(async (data) => {
     try {
-      // Asignamos el ID al objeto data, por si el backend lo requiere
-      data.mantenimientoId = mantenimientoId;
+      // Construir el objeto con los campos relevantes
+      
+      const datosParaEnviar = {};
 
-      // Realizamos el PATCH con los datos actuales
-      await patchMantenimientoMonitoreo(mantenimientoId, data);
+      if (data.checkGuadana) {
+        datosParaEnviar.guadana = data.guadana;
+      }
+      if (data.checkAplicacion) {
+        datosParaEnviar.fechaAplicacionTratamiento = data.fechaAplicacionTratamiento;
+      }
+      if (data.necesidadArboles) {
+        datosParaEnviar.necesidadArboles = data.necesidadArboles;
+      }
+      if (data.tipoTratamiento) {
+        datosParaEnviar.tipoTratamiento = data.tipoTratamiento;
+      }
 
-      // Recargamos la página (igual que en tu PreparacionTerrenoForm)
-      window.location.reload();
+      // Asignar la plantación a la que pertenece
+      datosParaEnviar.idPlantacion = Number(plantacionId);
+
+      // Llamamos al POST, sin pasar ningún ID en la URL
+      await postMantenimientoMonitoreo(datosParaEnviar);
+
+      // Recargar la página tras crear
+      if (onCreated) {
+        onCreated();
+      }
     } catch (error) {
-      console.error('Error al actualizar Mantenimiento/Monitoreo:', error);
+      console.error('Error al crear el mantenimiento/monitoreo:', error);
     }
   });
 
@@ -64,81 +117,60 @@ export function MantenimientoMonitoreoForm({ mantenimientoId }) {
     <div>
       <h3>Agregar Mantenimiento/Monitoreo</h3>
       <form onSubmit={onSubmit}>
-
-        {/* GUADAÑA (checkbox para fecha) */}
+        {/* GUADAÑA */}
         <div style={{ marginBottom: '8px' }}>
-          <input type="checkbox" {...register('checkGuadana')} />
-          <label style={{ marginLeft: '8px' }}>Guadaña (fecha actual si marcas)</label>
-          {/* Mostrar la fecha en pantalla si está marcado (opcional) */}
+          <input
+            type="checkbox"
+            {...register('checkGuadana')}
+            disabled={isCheckboxDisabled.guadana}
+          />
+          <label style={{ marginLeft: '8px' }}>Guadaña</label>
           {watchCheckGuadana && (
             <span style={{ marginLeft: '16px', color: 'green' }}>
-              (Fecha: {watch('guadaña')})
+              (Fecha: {watch('guadana')})
             </span>
           )}
         </div>
 
-        {/* necesidadArboles */}
+        {/* NECESIDAD DE ÁRBOLES */}
         <div style={{ marginBottom: '8px' }}>
           <label>Necesidad de Árboles:</label>
           <input
             type="text"
-            {...register('necesidadArboles', { required: true })}
+            {...register('necesidadArboles', { required: false })}
             style={{ marginLeft: '8px' }}
           />
-          {errors.necesidadArboles && <span style={{ color: 'red' }}>Requerido</span>}
+          {errors.necesidadArboles && <span style={{ color: 'red' }}></span>}
         </div>
 
-        {/* tipoTratamiento */}
+        {/* TIPO DE TRATAMIENTO */}
         <div style={{ marginBottom: '8px' }}>
           <label>Tipo de Tratamiento:</label>
-          <input
-            type="text"
-            {...register('tipoTratamiento', { required: true })}
+          <select
+            {...register('tipoTratamiento', { required: false })}
             style={{ marginLeft: '8px' }}
-          />
-          {errors.tipoTratamiento && <span style={{ color: 'red' }}>Requerido</span>}
+          >
+            <option value="">-- Seleccione una opción --</option>
+            <option value="insecticida">Insecticida</option>
+            <option value="fungicida">Fungicida</option>
+            <option value="herbicida">Herbicida</option>
+          </select>
+          {errors.tipoTratamiento && <span style={{ color: 'red' }}></span>}
         </div>
 
-        {/* estadoPlantaTratamiento */}
+        {/* FECHA DE APLICACIÓN DE TRATAMIENTO */}
         <div style={{ marginBottom: '8px' }}>
-          <label>Estado de la Planta (Tratamiento):</label>
           <input
-            type="text"
-            {...register('estadoPlantaTratamiento', { required: true })}
-            style={{ marginLeft: '8px' }}
+            type="checkbox"
+            {...register('checkAplicacion')}
+            disabled={isCheckboxDisabled.aplicacion}
           />
-          {errors.estadoPlantaTratamiento && <span style={{ color: 'red' }}>Requerido</span>}
-        </div>
-
-        {/* fechaAplicacionTratamiento (checkbox) */}
-        <div style={{ marginBottom: '8px' }}>
-          <input type="checkbox" {...register('checkAplicacion')} />
-          <label style={{ marginLeft: '8px' }}>Fecha de Aplicación (hoy si marcas)</label>
+          <label style={{ marginLeft: '8px' }}>
+            Fecha de Aplicación de Tratamiento
+          </label>
           {watchCheckAplicacion && (
             <span style={{ marginLeft: '16px', color: 'green' }}>
               (Fecha: {watch('fechaAplicacionTratamiento')})
-            </span>
-          )}
-        </div>
-
-        {/* observacionEvolucionPlanta */}
-        <div style={{ marginBottom: '8px' }}>
-          <label>Observación Evolución de la Planta:</label>
-          <input
-            type="text"
-            {...register('observacionEvolucionPlanta', { required: true })}
-            style={{ marginLeft: '8px' }}
-          />
-          {errors.observacionEvolucionPlanta && <span style={{ color: 'red' }}>Requerido</span>}
-        </div>
-
-        {/* fechaSeguimiento (checkbox) */}
-        <div style={{ marginBottom: '8px' }}>
-          <input type="checkbox" {...register('checkSeguimiento')} />
-          <label style={{ marginLeft: '8px' }}>Fecha de Seguimiento (hoy si marcas)</label>
-          {watchCheckSeguimiento && (
-            <span style={{ marginLeft: '16px', color: 'green' }}>
-              (Fecha: {watch('fechaSeguimiento')})
             </span>
           )}
         </div>
