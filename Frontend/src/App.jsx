@@ -3,8 +3,12 @@ import { Login } from './pages/Login';
 import { PlantacionInicio } from './components/plantacion-inicio';
 import { Taskform } from './pages/plantacion';
 import { InicioPlantacion } from "./pages/inicio-plantacion";
-import { PlantacionDetalle } from './pages/plantacionDetalle';
 import { PreparacionTerrenoPage } from './pages/preparacionTerreno';
+import { SeleccionArbolesPage } from './pages/seleccionArboles';
+import { RiegoFertilizacionPage} from './pages/riegoFertilizacion';
+import { MantenimientoMonitoreoPage } from '../src/pages/mantenimientoMonitoreo';
+import { PodaPage } from '../src/pages/poda';
+
 
 function App() {
   return (
@@ -15,8 +19,13 @@ function App() {
         <Route path='/inicio-plantacion' element={<PlantacionInicio />} />
         <Route path="/plantacion" element={<Taskform />} />
         <Route path="/plantacion/inicio" element={<InicioPlantacion />} />
-        <Route path="/plantacion/:idPlantacion" element={<PlantacionDetalle />} />
-        <Route path="/preparacion/:id" element={<PreparacionTerrenoPage />} />
+        <Route path="/preparacion/:plantacionId" element={<PreparacionTerrenoPage />} />
+        <Route path="/seleccion-arboles/:plantacionId" element={<SeleccionArbolesPage />} />
+        <Route path="/riego-fertilizacion/:idPlantacion" element={<RiegoFertilizacionPage />} />
+        <Route path="/mantenimiento/:idPlantacion" element={<MantenimientoMonitoreoPage />} />
+        <Route path="/poda/:idPlantacion" element={<PodaPage />} />
+
+
       </Routes>
     </BrowserRouter>
   );

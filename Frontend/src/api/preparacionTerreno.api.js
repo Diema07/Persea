@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // 1. Crear una instancia de Axios con configuración global
 const preparacionAPI = axios.create({
-    baseURL: 'http://localhost:8000/produccion/api/v1/PreparacionTerreno/',
+    baseURL: 'http://localhost:8000/preparacion/api/v1/PreparacionTerreno/',
     withCredentials: true,  // Permite el uso de cookies
 });
 
@@ -25,26 +25,35 @@ export const getAllPreparaciones = async () => {
 // 4. Obtener preparaciones filtradas por ID de plantación
 export const getPreparacionByPlantacionId = async (plantacionId) => {
     try {
-        const response = await preparacionAPI.get(`/?plantacionId=${plantacionId}`);
+        const response = await preparacionAPI.get(`?plantacionId=${plantacionId}`);
         return response.data;
     } catch (error) {
         console.error('Error al obtener la preparación de terreno:', error.response?.data || error);
     }
 };
 
-export const patchPreparacion = async (id, data) => {
-    try {
-      const csrfToken = await getCSRFToken();
-      // PATCH a /produccion/api/v1/PreparacionTerreno/<id>/
-      const response = await preparacionAPI.patch(`/${id}/`, data, {
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken,
-        },
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Error al actualizar la preparación de terreno:', error);
-      throw error;
+export const patchPreparacion = async (plantacionId, data) => {
+  try {
+    // Verifica que plantacionId sea un número
+    const plantacionIdNumber = Number(plantacionId);
+    if (isNaN(plantacionIdNumber)) {
+      throw new Error("plantacionId debe ser un número");
     }
-  };
+
+    // Obtén el CSRF token
+    const csrfToken = await getCSRFToken();
+
+    // Realiza la solicitud PATCH
+    const response = await preparacionAPI.patch(`/${plantacionIdNumber}/`, data, {
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error al actualizar la preparación de terreno:', error.response?.data || error);
+    throw error;
+  }
+};

@@ -24,7 +24,7 @@ export function PlantacionInicio() {
             <ul>
                 {plantaciones.map((plantacion) => (
                     <li key={plantacion.id}>
-                        <Link to={'/preparacion/${plantacion.id}'}>
+                        <Link to={`/preparacion/${plantacion.id}`}>
                             {plantacion.nombreParcela}
                         </Link>
                     </li>

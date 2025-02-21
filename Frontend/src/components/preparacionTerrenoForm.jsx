@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { patchPreparacion} from '../api/preparacionTerreno.api';
+import { getPreparacionByPlantacionId, patchPreparacion } from '../api/preparacionTerreno.api';
 
-export function PreparacionTerrenoForm({preparacionId }) {
+export function PreparacionTerrenoForm({ plantacionId, preparacionId }) {
   const {
     register,
     handleSubmit,
@@ -11,13 +11,56 @@ export function PreparacionTerrenoForm({preparacionId }) {
     formState: { errors },
   } = useForm();
 
-  // Observamos los checkboxes
+  // Estado para controlar si los checkboxes están deshabilitados
+  const [isCheckboxDisabled, setIsCheckboxDisabled] = useState({
+    limpieza: false,
+    analisis: false,
+    correcion: false,
+    labranza: false,
+  });
+
+  // Observar checkboxes
   const watchCheckLimpieza = watch('checkLimpieza');
   const watchCheckAnalisis = watch('checkAnalisis');
   const watchCheckCorrecion = watch('checkCorrecion');
   const watchCheckLabranza = watch('checkLabranza');
 
-  // Cada vez que cambie un checkbox, ponemos la fecha de hoy o null
+  // Al montar, obtenemos los datos existentes
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const plantacionIdNumber = Number(plantacionId);
+        if (isNaN(plantacionIdNumber)) {
+          throw new Error("plantacionId debe ser un número");
+        }
+
+        const data = await getPreparacionByPlantacionId(plantacionIdNumber);
+        // Asumimos que data es un arreglo y tomamos el primer registro
+        if (data && data.length > 0) {
+          const preparacion = data[0];
+
+          // Establecemos los valores en el formulario
+          setValue('checkLimpieza', !!preparacion.limpiezaTerreno);
+          setValue('checkAnalisis', !!preparacion.analisisSuelo);
+          setValue('checkCorrecion', !!preparacion.correcionSuelo);
+          setValue('checkLabranza', !!preparacion.labranza);
+
+          // Deshabilitar checkboxes si el campo ya está registrado
+          setIsCheckboxDisabled({
+            limpieza: !!preparacion.limpiezaTerreno,
+            analisis: !!preparacion.analisisSuelo,
+            correcion: !!preparacion.correcionSuelo,
+            labranza: !!preparacion.labranza,
+          });
+        }
+      } catch (error) {
+        console.error('Error al cargar la preparación de terreno:', error);
+      }
+    }
+    fetchData();
+  }, [plantacionId, setValue]);
+
+  // Cada vez que cambie un checkbox, actualizamos el valor de la fecha
   useEffect(() => {
     if (watchCheckLimpieza) {
       setValue('limpiezaTerreno', new Date().toISOString().split('T')[0]);
@@ -50,19 +93,38 @@ export function PreparacionTerrenoForm({preparacionId }) {
     }
   }, [watchCheckLabranza, setValue]);
 
-
   const onSubmit = handleSubmit(async (data) => {
     try {
+      // Verifica que preparacionId sea un número
+      const preparacionIdNumber = Number(preparacionId);
+      if (isNaN(preparacionIdNumber)) {
+        throw new Error("preparacionId debe ser un número");
+      }
 
-      data.preparacionId = preparacionId;
+      // Filtrar los datos para enviar solo los campos relevantes
+      const datosParaEnviar = {};
 
-    
-      await patchPreparacion(preparacionId,data);
+      if (data.checkLimpieza) {
+        datosParaEnviar.limpiezaTerreno = data.limpiezaTerreno;
+      }
+      if (data.checkAnalisis) {
+        datosParaEnviar.analisisSuelo = data.analisisSuelo;
+      }
+      if (data.checkCorrecion) {
+        datosParaEnviar.correcionSuelo = data.correcionSuelo;
+      }
+      if (data.checkLabranza) {
+        datosParaEnviar.labranza = data.labranza;
+      }
+      if (data.delimitacionParcela) {
+        datosParaEnviar.delimitacionParcela = data.delimitacionParcela;
+      }
 
- 
-      window.location.reload();
+      // Asegúrate de enviar el ID correcto para el PATCH
+      await patchPreparacion(preparacionIdNumber, datosParaEnviar);
+      window.location.reload(); // Recargar la página después de la actualización
     } catch (error) {
-      console.error('Error al crear la preparación de terreno:', error);
+      console.error('Error al actualizar la preparación de terreno:', error);
     }
   });
 
@@ -72,9 +134,12 @@ export function PreparacionTerrenoForm({preparacionId }) {
       <form onSubmit={onSubmit}>
         {/* LIMPIEZA DEL TERRENO */}
         <div style={{ marginBottom: '8px' }}>
-          <input type="checkbox" {...register('checkLimpieza')} />
+          <input
+            type="checkbox"
+            {...register('checkLimpieza')}
+            disabled={isCheckboxDisabled.limpieza} // Deshabilitar si ya está registrado
+          />
           <label style={{ marginLeft: '8px' }}>Limpieza del terreno</label>
-          {/* Muestra la fecha si está chequeado */}
           {watchCheckLimpieza && (
             <span style={{ marginLeft: '16px', color: 'green' }}>
               (Fecha: {watch('limpiezaTerreno')})
@@ -84,7 +149,11 @@ export function PreparacionTerrenoForm({preparacionId }) {
 
         {/* ANÁLISIS DE SUELO */}
         <div style={{ marginBottom: '8px' }}>
-          <input type="checkbox" {...register('checkAnalisis')} />
+          <input
+            type="checkbox"
+            {...register('checkAnalisis')}
+            disabled={isCheckboxDisabled.analisis} // Deshabilitar si ya está registrado
+          />
           <label style={{ marginLeft: '8px' }}>Análisis de suelo</label>
           {watchCheckAnalisis && (
             <span style={{ marginLeft: '16px', color: 'green' }}>
@@ -95,7 +164,11 @@ export function PreparacionTerrenoForm({preparacionId }) {
 
         {/* CORRECCIÓN DE SUELO */}
         <div style={{ marginBottom: '8px' }}>
-          <input type="checkbox" {...register('checkCorrecion')} />
+          <input
+            type="checkbox"
+            {...register('checkCorrecion')}
+            disabled={isCheckboxDisabled.correcion} // Deshabilitar si ya está registrado
+          />
           <label style={{ marginLeft: '8px' }}>Corrección de suelo</label>
           {watchCheckCorrecion && (
             <span style={{ marginLeft: '16px', color: 'green' }}>
@@ -106,7 +179,11 @@ export function PreparacionTerrenoForm({preparacionId }) {
 
         {/* LABRANZA */}
         <div style={{ marginBottom: '8px' }}>
-          <input type="checkbox" {...register('checkLabranza')} />
+          <input
+            type="checkbox"
+            {...register('checkLabranza')}
+            disabled={isCheckboxDisabled.labranza} // Deshabilitar si ya está registrado
+          />
           <label style={{ marginLeft: '8px' }}>Labranza</label>
           {watchCheckLabranza && (
             <span style={{ marginLeft: '16px', color: 'green' }}>
@@ -120,8 +197,8 @@ export function PreparacionTerrenoForm({preparacionId }) {
           <label>Delimitación de parcela (m²):</label>
           <input
             type="number"
-            step="any"  // Para permitir floats
-            {...register('delimitacionParcela', { required: true })}
+            step="any"
+            {...register('delimitacionParcela', { required: false })}
             style={{ marginLeft: '10px' }}
           />
           {errors.delimitacionParcela && (
