@@ -13,36 +13,32 @@ const getCSRFToken = async () => {
   return response.data.csrfToken;
 };
 
-// 1) Obtener registros por ID de plantación (GET)
+// 1) Obtener todos los registros de Poda (opcional)
+export const getAllPoda = async () => {
+  try {
+    const response = await podaAPI.get('/');
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener los registros de Poda:', error.response?.data || error);
+  }
+};
+
+// 2) Obtener registros por ID de plantación (GET)
 export const getPodaByPlantacionId = async (plantacionId) => {
   try {
-    // Ejemplo: /?plantacionId=3
-    const response = await podaAPI.get(`/?plantacionId=${plantacionId}`);
-    return response.data; // array de Poda
+    const response = await podaAPI.get(`?plantacionId=${plantacionId}`);
+    return response.data;
   } catch (error) {
-    console.error('Error al obtener Poda:', error.response?.data || error);
-    throw error;
+    console.error('Error al obtener Poda por ID de plantación:', error.response?.data || error);
   }
 };
 
-// 2) Obtener detalle de un registro por su ID (GET)
-export const getPodaById = async (id) => {
-  try {
-    // Ejemplo: /5/
-    const response = await podaAPI.get(`${id}/`);
-    return response.data; // objeto Poda
-  } catch (error) {
-    console.error('Error al obtener detalle de Poda:', error.response?.data || error);
-    throw error;
-  }
-};
-
-// 3) Actualizar (PATCH) un registro de Poda
-export const patchPoda = async (id, data) => {
+// 3) Crear un nuevo registro de Poda (POST)
+export const postPoda = async (data) => {
+  console.log("Datos a enviar:", data);
   try {
     const csrfToken = await getCSRFToken();
-    // PATCH /5/
-    const response = await podaAPI.patch(`${id}/`, data, {
+    const response = await podaAPI.post(`/`, data, {
       headers: {
         'Content-Type': 'application/json',
         'X-CSRFToken': csrfToken,
@@ -50,7 +46,7 @@ export const patchPoda = async (id, data) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error al actualizar Poda:', error.response?.data || error);
+    console.error('Error al crear Poda:', error.response?.data || error);
     throw error;
   }
 };

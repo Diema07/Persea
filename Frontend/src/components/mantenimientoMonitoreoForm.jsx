@@ -122,7 +122,6 @@ export function MantenimientoMonitoreoForm({ plantacionId, onCreated }) {
           <input
             type="checkbox"
             {...register('checkGuadana')}
-            disabled={isCheckboxDisabled.guadana}
           />
           <label style={{ marginLeft: '8px' }}>Guadaña</label>
           {watchCheckGuadana && (
@@ -163,7 +162,6 @@ export function MantenimientoMonitoreoForm({ plantacionId, onCreated }) {
           <input
             type="checkbox"
             {...register('checkAplicacion')}
-            disabled={isCheckboxDisabled.aplicacion}
           />
           <label style={{ marginLeft: '8px' }}>
             Fecha de Aplicación de Tratamiento

@@ -17,6 +17,7 @@ export function PreparacionTerrenoForm({ plantacionId, preparacionId }) {
     analisis: false,
     correcion: false,
     labranza: false,
+    delimitacionParcela: false
   });
 
   // Observar checkboxes
@@ -24,6 +25,7 @@ export function PreparacionTerrenoForm({ plantacionId, preparacionId }) {
   const watchCheckAnalisis = watch('checkAnalisis');
   const watchCheckCorrecion = watch('checkCorrecion');
   const watchCheckLabranza = watch('checkLabranza');
+  const watchDelimitacionParcela = watch('delimitacionParcela');
 
   // Al montar, obtenemos los datos existentes
   useEffect(() => {
@@ -44,6 +46,7 @@ export function PreparacionTerrenoForm({ plantacionId, preparacionId }) {
           setValue('checkAnalisis', !!preparacion.analisisSuelo);
           setValue('checkCorrecion', !!preparacion.correcionSuelo);
           setValue('checkLabranza', !!preparacion.labranza);
+          setValue('delimitacionParcela', preparacion.delimitacionParcela || '');
 
           // Deshabilitar checkboxes si el campo ya está registrado
           setIsCheckboxDisabled({
@@ -51,6 +54,7 @@ export function PreparacionTerrenoForm({ plantacionId, preparacionId }) {
             analisis: !!preparacion.analisisSuelo,
             correcion: !!preparacion.correcionSuelo,
             labranza: !!preparacion.labranza,
+            delimitacionParcela: !!preparacion.delimitacionParcela,
           });
         }
       } catch (error) {
@@ -122,6 +126,13 @@ export function PreparacionTerrenoForm({ plantacionId, preparacionId }) {
 
       // Asegúrate de enviar el ID correcto para el PATCH
       await patchPreparacion(preparacionIdNumber, datosParaEnviar);
+
+      if (data.delimitacionParcela) {
+        setIsCheckboxDisabled((prevState) => ({
+          ...prevState,
+          delimitacionParcela: true,
+        }));
+      }
       window.location.reload(); // Recargar la página después de la actualización
     } catch (error) {
       console.error('Error al actualizar la preparación de terreno:', error);
@@ -199,11 +210,11 @@ export function PreparacionTerrenoForm({ plantacionId, preparacionId }) {
             type="number"
             step="any"
             {...register('delimitacionParcela', { required: false })}
+            disabled={isCheckboxDisabled.delimitacionParcela}
             style={{ marginLeft: '10px' }}
           />
           {errors.delimitacionParcela && (
             <span style={{ color: 'red', marginLeft: '8px' }}>
-              Requerido
             </span>
           )}
         </div>

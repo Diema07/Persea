@@ -149,7 +149,6 @@ export function RiegoFertilizacionForm({ plantacionId, riegoId, onCreated }) {
           <input
             type="checkbox"
             {...register('checkRiego')}
-            disabled={isCheckboxDisabled.riego}
           />
           <label style={{ marginLeft: '8px' }}>Riego</label>
           {watchCheckRiego && (
@@ -179,7 +178,6 @@ export function RiegoFertilizacionForm({ plantacionId, riegoId, onCreated }) {
           <input
             type="checkbox"
             {...register('checkFertilizante')}
-            disabled={isCheckboxDisabled.fertilizante}
           />
           <label style={{ marginLeft: '8px' }}>Fertilización</label>
           {watchCheckFertilizante && (
@@ -188,6 +186,7 @@ export function RiegoFertilizacionForm({ plantacionId, riegoId, onCreated }) {
             </span>
           )}
         </div>
+
 
         {/* MÉTODO DE APLICACIÓN DE FERTILIZANTE */}
         <div style={{ marginBottom: '8px' }}>

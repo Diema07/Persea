@@ -55,10 +55,12 @@ class MantenimientoMonitoreoView(viewsets.ModelViewSet):
                 idPlantacion__idUsuario=self.request.user
             )
             plantacion_id = self.request.query_params.get('plantacionId', None)
+            print(f"Plantacion ID recibido en backend: {plantacion_id}")
             if plantacion_id:
                 queryset = queryset.filter(idPlantacion__id=plantacion_id)
             return queryset
         return MantenimientoMonitoreo.objects.none()
+    print(MantenimientoMonitoreo.objects.filter(idPlantacion__id=3).values())
 
     def create(self, request, *args, **kwargs):
         """

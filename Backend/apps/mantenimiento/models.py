@@ -1,12 +1,35 @@
 from django.db import models
 
 class RiegoFertilizacion(models.Model):
+    RIEGO_OPCIONES = [
+        ('aspersión', 'Aspersión'),
+        ('goteo', 'Goteo'),
+        ('gravedad', 'Gravedad'),
+    ]
     tipoRiego = models.CharField(max_length=30, null=True, blank=True)
     fechaRiego = models.DateField( null=True, blank=True)
+
+    METODO_APLICACION_OPCIONES = [
+        ('al suelo', 'Al suelo'),
+        ('foliar', 'Foliar'),
+        ('fertirriego', 'Fertirriego'),
+    ]
     metodoAplicacionFertilizante = models.CharField(max_length=30, null=True, blank=True)
+
+    TIPO_FERTILIZANTE_OPCIONES = [
+        ('orgánico', 'Orgánico'),
+        ('químico', 'Químico'),
+        ('mixto', 'Mixto'),
+    ]
     tipoFertilizante = models.CharField(max_length=30, null=True, blank=True)
     nombreFertilizante = models.CharField(max_length=30, null=True, blank=True)
     cantidadFertilizante = models.FloatField( null=True, blank=True)
+
+    MEDIDA_FERTILIZANTE_OPCIONES = [
+        ('kg', 'Kilogramos'),
+        ('litros', 'Litros'),
+        ('toneladas', 'Toneladas'),
+    ]
     medidaFertilizante = models.CharField(max_length=20, null=True, blank=True)
     fechaFertilizante = models.DateField( null=True, blank=True)
     idPlantacion = models.ForeignKey('plantaciones.Plantacion', on_delete=models.CASCADE, related_name='riego_fertilizacion')
@@ -40,8 +63,27 @@ class MantenimientoMonitoreo(models.Model):
 
 
 class Poda(models.Model):
+
+    TIPOS_PODA = [
+        ('formacion', 'Formación'),
+        ('mantenimiento', 'Mantenimiento'),
+        ('sanitaria', 'Sanitaria'),
+    ]
     tipoPoda = models.CharField(max_length=30, null=True, blank=True)
+
+    HERRAMIENTAS_USADAS = [
+        ('tijeras', 'Tijeras'),
+        ('serrucho', 'Serrucho'),
+        ('motosierra', 'Motosierra'),
+    ]
     herramientasUsadas = models.CharField(max_length=60, null=True, blank=True)
+
+    TECNICAS_USADAS = [
+        ('ralo', 'Raleo'),
+        ('deschuponado', 'Deschuponado'),
+        ('rebaje', 'Rebaje'),
+    ]
+
     tecnicasUsadas = models.CharField(max_length=60, null=True, blank=True)
     fechaPoda = models.DateField( null=True, blank=True)
     idPlantacion = models.ForeignKey('plantaciones.Plantacion', on_delete=models.CASCADE, related_name='podas')

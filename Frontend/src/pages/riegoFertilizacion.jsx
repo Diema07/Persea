@@ -44,14 +44,10 @@ export function RiegoFertilizacionPage() {
     setIdRiegoEdit(null);
   };
 
-  // Botón para ir a Mantenimiento/Monitoreo
-  const handleRedirectToMantenimiento = () => {
-    navigate(`/mantenimiento-monitoreo/${idPlantacion}`);
-  };
 
-  // Botón para ir a Poda
-  const handleRedirectToPoda = () => {
-    navigate(`/poda/${idPlantacion}`);
+  // Botón para ir a Preparacion terreno 
+  const handleRedirectToPeparacionTerreno = () => {
+    navigate(`/preparacion/${idPlantacion}`);
   };
 
   return (
@@ -68,21 +64,12 @@ export function RiegoFertilizacionPage() {
         onCreated={handleUpdated}
       />
 
-      {/* Botones de redirección */}
-      <div className="button-group">
         <button
-          onClick={handleRedirectToMantenimiento}
+          onClick={handleRedirectToPeparacionTerreno}
           className="action-button"
         >
-          Ir a Mantenimiento/Monitoreo
+          Ir a Preparacion Terreno
         </button>
-        <button
-          onClick={handleRedirectToPoda}
-          className="action-button"
-        >
-          Ir a Poda
-        </button>
-      </div>
 
       {/* Historial de Riego/Fertilización */}
       <h3>Historial de Riego/Fertilización:</h3>
@@ -96,7 +83,7 @@ export function RiegoFertilizacionPage() {
             <li key={r.id} className="riego-item">
               <p><strong>ID:</strong> {r.id}</p>
               <p><strong>Fecha Riego:</strong> {r.fechaRiego || '---'}</p>
-              <p><strong>Fecha Fertilización:</strong> {r.fechaFertilizacion || '---'}</p>
+              <p><strong>Fecha Fertilización:</strong> {r.fechaFertilizante || '---'}</p>
               <p><strong>Tipo de Riego:</strong> {r.tipoRiego || '---'}</p>
               <p><strong>Método de Aplicación:</strong> {r.metodoAplicacionFertilizante || '---'}</p>
               <p><strong>Tipo de Fertilizante:</strong> {r.tipoFertilizante || '---'}</p>

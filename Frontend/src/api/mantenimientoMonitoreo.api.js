@@ -30,7 +30,6 @@ export const getMantenimientoByPlantacionId = async (plantacionId) => {
     return response.data; 
   } catch (error) {
     console.error('Error al obtener Mantenimiento/Monitoreo:', error.response?.data || error);
-    throw error;
   }
 };
 

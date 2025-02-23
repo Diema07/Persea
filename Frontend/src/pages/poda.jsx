@@ -5,59 +5,61 @@ import { getPodaByPlantacionId } from '../api/poda.api';
 import { PodaForm } from '../components/podaForm';
 
 export function PodaPage() {
-  const { idPlantacion } = useParams();
+  const { plantacionId } = useParams();
+  const idPlantacion = Number(plantacionId);
   const [podas, setPodas] = useState([]);
-  const [idPodaEdit, setIdPodaEdit] = useState(null);
 
-  useEffect(() => {
-    loadData();
-  }, [idPlantacion]);
-
-  const loadData = async () => {
-    if (!idPlantacion) return;
+  // Carga los registros de poda existentes
+  const loadPodas = async () => {
+    if (!idPlantacion) {
+      console.error("plantacionId es undefined o no es un número");
+      return;
+    }
     try {
       const data = await getPodaByPlantacionId(idPlantacion);
-      setPodas(data || []);
+      setPodas(data);
     } catch (error) {
-      console.error('Error al obtener Poda:', error);
+      console.error('Error al obtener registros de poda:', error);
     }
   };
 
-  // Cuando se guarde un registro, recargamos la lista y cerramos el form
-  const handleUpdated = () => {
-    loadData();
-    setIdPodaEdit(null);
-  };
+  useEffect(() => {
+    if (idPlantacion) {
+      loadPodas();
+    }
+  }, [idPlantacion]);
+
+  // Obtener el ID de la primera poda (si existe)
+  const podaId = podas.length > 0 ? podas[0].id : null;
 
   return (
-    <div style={{ padding: '16px' }}>
+    <div>
       <h2>Poda - Plantación {idPlantacion}</h2>
 
+      {/* Formulario */}
+      <PodaForm
+        plantacionId={idPlantacion}
+        podaId={podaId}
+        onCreated={loadPodas}
+      />
+
+      {/* Historial de Podas */}
+      <h3>Historial de Podas:</h3>
       {podas.length === 0 ? (
-        <p>No hay registros de Poda.</p>
+        <p>No hay registros de poda.</p>
       ) : (
         <ul>
           {podas.map((p) => (
-            <li key={p.id} style={{ marginBottom: '12px' }}>
-              <p><strong>ID:</strong> {p.id}</p>
-              <p><strong>Tipo de Poda:</strong> {p.tipoPoda}</p>
-              <p><strong>Herramientas Usadas:</strong> {p.herramientasUsadas}</p>
-              <p><strong>Técnicas Usadas:</strong> {p.tecnicasUsadas}</p>
-              <p><strong>Fecha de Poda:</strong> {p.fechaPoda || '---'}</p>
-              <button onClick={() => setIdPodaEdit(p.id)}>
-                Editar
-              </button>
+            <li key={p.id}>
+              <strong>ID:</strong> {p.id} <br />
+              <strong>Tipo de Poda:</strong> {p.tipoPoda === 'formacion' ? 'Formación' : p.tipoPoda === 'mantenimiento' ? 'Mantenimiento' : 'Sanitaria'} <br />
+              <strong>Herramientas Usadas:</strong> {p.herramientasUsadas === 'tijeras' ? 'Tijeras' : p.herramientasUsadas === 'serrucho' ? 'Serrucho' : 'Motosierra'} <br />
+              <strong>Técnicas Usadas:</strong> {p.tecnicasUsadas === 'ralo' ? 'Raleo' : p.tecnicasUsadas === 'deschuponado' ? 'Deschuponado' : 'Rebaje'} <br />
+              <strong>Fecha de Poda:</strong> {p.fechaPoda || '---'} <br />
+              <hr />
             </li>
           ))}
         </ul>
-      )}
-
-      {/* Si se selecciona un registro para editar, muestra el formulario */}
-      {idPodaEdit && (
-        <PodaForm
-          idPoda={idPodaEdit}
-          onUpdated={handleUpdated}
-        />
       )}
     </div>
   );

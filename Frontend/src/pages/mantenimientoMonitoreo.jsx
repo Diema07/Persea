@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { getMantenimientoByPlantacionId } from '../api/mantenimientoMonitoreo.api';
 import { MantenimientoMonitoreoForm } from '../components/mantenimientoMonitoreoForm';
 
@@ -7,7 +7,6 @@ export function MantenimientoMonitoreoPage() {
   const { plantacionId } = useParams();
   const idPlantacion = Number(plantacionId);
   const [mantenimientos, setMantenimientos] = useState([]);
-  const navigate = useNavigate();
 
   // Carga los mantenimientos existentes
   const loadMantenimientos = async () => {
@@ -32,15 +31,6 @@ export function MantenimientoMonitoreoPage() {
   // Obtener el ID del primer mantenimiento (si existe)
   const mantenimientoId = mantenimientos.length > 0 ? mantenimientos[0].id : null;
 
-  // (Opcional) Botón para ir a Selección de Árboles
-  const handleRedirectToRiegoFertilizacion = () => {
-    navigate(`/riego-fertilizacion/${idPlantacion}`);
-  };
-
-  const handleRedirectTopoda = () => {
-    navigate(`/poda/${idPlantacion}`);
-  };
-
 
   return (
     <div>
@@ -53,36 +43,7 @@ export function MantenimientoMonitoreoPage() {
         onCreated={loadMantenimientos}
       />
 
-      <button
-        onClick={handleRedirectToRiegoFertilizacion}
-        style={{
-          marginBottom: '16px',
-          padding: '8px 16px',
-          backgroundColor: '#007bff',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-        }}
-      >
-        Ir a Riego fertilizacion 
-      </button>
-
-      <button
-        onClick={handleRedirectTopoda}
-        style={{
-          marginBottom: '16px',
-          padding: '8px 16px',
-          backgroundColor: '#007bff',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-        }}
-      >
-        Ir a Riego poda 
-      </button>
-
+      
       {/* (Opcional) Historial de Mantenimientos */}
       <h3>Historial de Mantenimientos:</h3>
       {mantenimientos.length === 0 ? (

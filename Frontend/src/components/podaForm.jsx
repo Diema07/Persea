@@ -1,12 +1,9 @@
 // src/components/PodaForm.jsx
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import {
-  getPodaById,
-  patchPoda
-} from '../api/poda.api';
+import { getPodaByPlantacionId, postPoda } from '../api/poda.api';
 
-export function PodaForm({ idPoda, onUpdated }) {
+export function PodaForm({ plantacionId, onCreated }) {
   const {
     register,
     handleSubmit,
@@ -15,89 +12,136 @@ export function PodaForm({ idPoda, onUpdated }) {
     formState: { errors },
   } = useForm();
 
-  // Observamos checkbox para asignar fecha actual o null
-  const watchCheckFecha = watch('checkFechaPoda');
+  const [isCheckboxDisabled, setIsCheckboxDisabled] = useState({
+    fechaPoda:false
+  });
 
-  // Cargar datos existentes
+
+  const watchCheckFechaPoda = watch('checkFechaPoda');
+
   useEffect(() => {
-    async function loadData() {
-      if (!idPoda) return;
+    async function fetchData() {
       try {
-        const data = await getPodaById(idPoda);
-        // Llenar el formulario
-        setValue('tipoPoda', data.tipoPoda || '');
-        setValue('herramientasUsadas', data.herramientasUsadas || '');
-        setValue('tecnicasUsadas', data.tecnicasUsadas || '');
+        const plantacionIdNumber = Number(plantacionId);
+        if (isNaN(plantacionIdNumber)) {
+          throw new Error("plantacionId debe ser un número");
+        }
+        const data = await getPodaByPlantacionId(plantacionIdNumber);
+        
+        if (data && data.length > 0) {
+          const Poda = data[0];
 
-        // Si existía fechaPoda, marcamos el checkbox
-        setValue('checkFechaPoda', !!data.fechaPoda);
+        
+        setValue('checkFechaPoda', !!Poda.fechaPoda);
+
+        setIsCheckboxDisabled({
+          Poda: !!Poda.fechaPoda,
+        });
+
+        setValue('tipoPoda', Poda.tipoPoda || '');
+        setValue('herramientasUsadas', Poda.herramientasUsadas || '');
+        setValue('tecnicasUsadas', Poda.tecnicasUsadas || '');
+        }
       } catch (error) {
         console.error('Error al cargar Poda:', error);
       }
     }
-    loadData();
-  }, [idPoda, setValue]);
+    fetchData();
+  }, [plantacionId, setValue]);
 
-  // Cada checkbox => true => asigna fecha actual en el backend
-  // false => null => quita la fecha
   useEffect(() => {
-    setValue('fechaPoda', watchCheckFecha ? true : null);
-  }, [watchCheckFecha, setValue]);
+    if (watchCheckFechaPoda) {
+      setValue('fechaPoda', new Date().toISOString().split('T')[0]);
+    } else {
+      setValue('fechaPoda', null);
+    }
+  }, [watchCheckFechaPoda, setValue]);
 
-  // Manejo del submit
-  const onSubmit = handleSubmit(async (formData) => {
+  const onSubmit = handleSubmit(async (data) => {
     try {
-      await patchPoda(idPoda, formData);
-      if (onUpdated) onUpdated();
+      const datosParaEnviar = {};
+
+      if (data.tipoPoda) {
+        datosParaEnviar.tipoPoda = data.tipoPoda;
+      }
+
+      if (data.herramientasUsadas) {
+        datosParaEnviar.herramientasUsadas = data.herramientasUsadas;
+      }
+
+      if (data.tecnicasUsadas) {
+        datosParaEnviar.tecnicasUsadas = data.tecnicasUsadas;
+      }
+
+      if (data.fechaPoda) {
+        datosParaEnviar.fechaPoda = data.fechaPoda;
+      }
+
+      datosParaEnviar.idPlantacion = Number(plantacionId);
+      console.log("Datos a enviar:", datosParaEnviar);
+      
+      await postPoda(datosParaEnviar);
+      if (onCreated) {
+        onCreated();
+      } 
     } catch (error) {
-      console.error('Error al actualizar Poda:', error);
+      console.error('Error al crear Poda:', error);
     }
   });
 
   return (
-    <form onSubmit={onSubmit} style={{ marginTop: '16px' }}>
-      <h3>Editar Poda #{idPoda}</h3>
+    <div>
+      <h3> Agregar Poda</h3>
+      <form onSubmit={onSubmit}>
+        {/* Tipo de Poda */}
+        <div style={{ marginBottom: '8px' }}>
+          <label>Tipo de Poda:</label>
+          <select {...register('tipoPoda', { required: true })} style={{ marginLeft: '8px' }}>
+            <option value="">Seleccione...</option>
+            <option value="formacion">Formación</option>
+            <option value="mantenimiento">Mantenimiento</option>
+            <option value="sanitaria">Sanitaria</option>
+          </select>
+          {errors.tipoPoda && <span style={{ color: 'red' }}>Requerido</span>}
+        </div>
 
-      {/* Tipo de Poda */}
-      <div style={{ marginBottom: '8px' }}>
-        <label>Tipo de Poda:</label>
-        <input
-          type="text"
-          {...register('tipoPoda', { required: true })}
-          style={{ marginLeft: '8px' }}
-        />
-        {errors.tipoPoda && <span style={{ color: 'red' }}>Requerido</span>}
-      </div>
+        {/* Herramientas Usadas */}
+        <div style={{ marginBottom: '8px' }}>
+          <label>Herramientas Usadas:</label>
+          <select {...register('herramientasUsadas', { required: true })} style={{ marginLeft: '8px' }}>
+            <option value="">Seleccione...</option>
+            <option value="tijeras">Tijeras</option>
+            <option value="serrucho">Serrucho</option>
+            <option value="motosierra">Motosierra</option>
+          </select>
+          {errors.herramientasUsadas && <span style={{ color: 'red' }}>Requerido</span>}
+        </div>
 
-      {/* Herramientas Usadas */}
-      <div style={{ marginBottom: '8px' }}>
-        <label>Herramientas Usadas:</label>
-        <input
-          type="text"
-          {...register('herramientasUsadas', { required: true })}
-          style={{ marginLeft: '8px' }}
-        />
-        {errors.herramientasUsadas && <span style={{ color: 'red' }}>Requerido</span>}
-      </div>
+        {/* Técnicas Usadas */}
+        <div style={{ marginBottom: '8px' }}>
+          <label>Técnicas Usadas:</label>
+          <select {...register('tecnicasUsadas', { required: true })} style={{ marginLeft: '8px' }}>
+            <option value="">Seleccione...</option>
+            <option value="ralo">Raleo</option>
+            <option value="deschuponado">Deschuponado</option>
+            <option value="rebaje">Rebaje</option>
+          </select>
+          {errors.tecnicasUsadas && <span style={{ color: 'red' }}>Requerido</span>}
+        </div>
 
-      {/* Técnicas Usadas */}
-      <div style={{ marginBottom: '8px' }}>
-        <label>Técnicas Usadas:</label>
-        <input
-          type="text"
-          {...register('tecnicasUsadas', { required: true })}
-          style={{ marginLeft: '8px' }}
-        />
-        {errors.tecnicasUsadas && <span style={{ color: 'red' }}>Requerido</span>}
-      </div>
+        {/* Fecha de Poda */}
+        <div style={{ marginBottom: '8px' }}>
+          <input type="checkbox" {...register('checkFechaPoda')} />
+          <label style={{ marginLeft: '8px' }}>Fecha de Poda (hoy si marcas)</label>
+          {watchCheckFechaPoda && (
+            <span style={{ marginLeft: '16px', color: 'green' }}>
+              (Fecha: {watch('fechaPoda')})
+            </span>
+          )}
+        </div>
 
-      {/* fechaPoda (checkbox) */}
-      <div style={{ marginBottom: '8px' }}>
-        <input type="checkbox" {...register('checkFechaPoda')} />
-        <label style={{ marginLeft: '8px' }}>Fecha de Poda (hoy si marcas)</label>
-      </div>
-
-      <button>Guardar</button>
-    </form>
+        <button style={{ marginTop: '16px' }}>Guardar</button>
+      </form>
+    </div>
   );
 }
