@@ -1,0 +1,6 @@
+SECRET_KEY="django-insecure-j3##i1_r2hf1@d7^89@fa**zqgs=5v@9kw=_m^dt10*zt_$i1d"
+DEBUG=True
+DATABASE_URL=
+ALLOWED_HOSTS_DEV='*'
+ALLOWED_HOSTS_DEPLOY='localhost', '127.0.0.1'
+GOOGLE_CLIENT_ID=869023178802-poqqbrc26penimnpo11p8o9s8c3c3deo.apps.googleusercontent.com

@@ -1,18 +1,20 @@
 import '../styles/login.css';
+import "bootstrap/dist/css/bootstrap.min.css";
 import { GoogleLogin } from '@react-oauth/google';
-import axios from 'axios'; // Importar axios
-import { useNavigate, Link } from 'react-router-dom'; // Importar Link
-import Cookies from 'js-cookie'; // Importar js-cookie
-import { useEffect } from 'react'; // Importar useEffect
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import aguacate from "../img/aguacate.png";
+import persea from "../img/persea1.png";
+import logo from "../img/logo.png";
 
 export function Login() {
   const navigate = useNavigate();
 
-  // Función para obtener el token CSRF
   const fetchCsrfToken = async () => {
     try {
       const response = await axios.get('http://localhost:8000/api/usuarios/get-csrf-token/', {
-        withCredentials: true, // Permitir el envío de cookies
+        withCredentials: true,
       });
       console.log('Token CSRF obtenido:', response.data.csrfToken);
     } catch (error) {
@@ -20,31 +22,30 @@ export function Login() {
     }
   };
 
-  // Obtener el token CSRF cuando el componente se monta
   useEffect(() => {
     fetchCsrfToken();
   }, []);
 
   const handleGoogleLogin = () => {
-    // Redirigir al usuario a la URL de inicio de sesión de Google proporcionada por allauth
     window.location.href = 'http://localhost:8000/accounts/google/login/';
   };
 
   return (
-    <div className="login-container">
-      <div className="login-box">
-        <div className="login-split">
-          <div className="login-left">
-            <img src="https://www.frutas-hortalizas.com/img/fruites_verdures/presentacio/86.jpg" alt="Decoración" className="side-image" />
-          </div>
-          <div className="login-right">
-            <div className="login-logo">
-              <img src="logo.png" alt="Logo" className="logo-image" />
-            </div>
+    <div className="contenedor">
+      <div className="caja">
+        <div className="contenedor-2">
+          <div className="parte-izquierda">
+            <img src={persea} alt="Planta" className="imagen" />
+            <p className="slogan">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit iste facilis ipsum nesciunt quibusdam, error, modi numquam et adipisci dolorem nulla at repellendus provident placeat amet eaque rem quasi. Nulla.
+            </p>
             <button onClick={handleGoogleLogin} className="google-login-button">
+              <img src={logo} alt="Google Logo" className='logo'/>
               Iniciar sesión con Google
             </button>
-            
+          </div>
+          <div className="parte-derecha">
+            <img src={aguacate} alt="Aguacate" className="imagen-lateral" />
           </div>
         </div>
       </div>
