@@ -34,23 +34,9 @@ export function PreparacionTerrenoPage() {
   const preparacionId = preparaciones.length > 0 ? preparaciones[0].id : null;
 
   // Función para redirigir a la página de selección de árboles
-  const handleRedirectToSeleccionArboles = () => {
-    navigate(`/seleccion-arboles/${idPlantacion}`); // Cambia la ruta según tu configuración
+  const handleRedirectToGestionTareas = () => {
+    navigate(`/gestionTareas/${idPlantacion}`); // Cambia la ruta según tu configuración
   };
-
-  const handleRedirectToRiegoFertilizacion = () => {
-    navigate(`/riego-fertilizacion/${idPlantacion}`);
-  };
-
-  const handleRedirectToMantenimientoMonitoreo = () => {
-    navigate(`/mantenimiento-monitoreo/${idPlantacion}`);
-  };
-
-  const handleRedirectTopoda = () => {
-    navigate(`/poda/${idPlantacion}`);
-  };
-
-
 
 
   return (
@@ -66,7 +52,7 @@ export function PreparacionTerrenoPage() {
 
       {/* Botón para redirigir a la página de selección de árboles */}
       <button
-        onClick={handleRedirectToSeleccionArboles}
+        onClick={handleRedirectToGestionTareas}
         style={{
           marginBottom: '16px',
           padding: '8px 16px',
@@ -77,52 +63,7 @@ export function PreparacionTerrenoPage() {
           cursor: 'pointer',
         }}
       >
-        Ir a Selección de Árboles
-      </button>
-
-      <button
-        onClick={handleRedirectToRiegoFertilizacion}
-        style={{
-          marginBottom: '16px',
-          padding: '8px 16px',
-          backgroundColor: '#007bff',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-        }}
-      >
-        Ir a Riego fertilizacion 
-      </button>
-
-      <button
-        onClick={handleRedirectToMantenimientoMonitoreo}
-        style={{
-          marginBottom: '16px',
-          padding: '8px 16px',
-          backgroundColor: '#007bff',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-        }}
-      >
-        Ir a Riego Mantenimiento y Monitoreo
-      </button>
-
-      <button
-        onClick={handleRedirectTopoda}
-        style={{
-          marginBottom: '16px',
-          padding: '8px 16px',
-          backgroundColor: '#007bff',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-        }}
-      >
-        Ir a Riego poda 
+        Ir a Gestion tareas 
       </button>
 
 

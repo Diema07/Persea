@@ -46,8 +46,8 @@ export function RiegoFertilizacionPage() {
 
 
   // Botón para ir a Preparacion terreno 
-  const handleRedirectToPeparacionTerreno = () => {
-    navigate(`/preparacion/${idPlantacion}`);
+  const handleRedirectToGestionTareas = () => {
+    navigate(`/gestionTareas/${idPlantacion}`);
   };
 
   return (
@@ -64,12 +64,20 @@ export function RiegoFertilizacionPage() {
         onCreated={handleUpdated}
       />
 
-        <button
-          onClick={handleRedirectToPeparacionTerreno}
-          className="action-button"
-        >
-          Ir a Preparacion Terreno
-        </button>
+      <button
+        onClick={handleRedirectToGestionTareas}
+        style={{
+          marginBottom: '16px',
+          padding: '8px 16px',
+          backgroundColor: '#007bff',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+        }}
+      >
+        Ir a Gestion tareas 
+      </button>
 
       {/* Historial de Riego/Fertilización */}
       <h3>Historial de Riego/Fertilización:</h3>

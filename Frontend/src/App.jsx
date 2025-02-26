@@ -8,6 +8,7 @@ import { SeleccionArbolesPage } from './pages/seleccionArboles';
 import { RiegoFertilizacionPage} from './pages/riegoFertilizacion';
 import { MantenimientoMonitoreoPage } from '../src/pages/mantenimientoMonitoreo';
 import { PodaPage } from '../src/pages/poda';
+import {GestionTareasPage} from '../src/pages/gestionTareas'
 
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <Route path='/inicio-plantacion' element={<PlantacionInicio />} />
         <Route path="/plantacion" element={<Taskform />} />
         <Route path="/plantacion/inicio" element={<InicioPlantacion />} />
+        <Route path="/gestionTareas/:plantacionId" element={<GestionTareasPage />} />
         <Route path="/preparacion/:plantacionId" element={<PreparacionTerrenoPage />} />
         <Route path="/seleccion-arboles/:plantacionId" element={<SeleccionArbolesPage />} />
         <Route path="/riego-fertilizacion/:plantacionId" element={<RiegoFertilizacionPage />} />

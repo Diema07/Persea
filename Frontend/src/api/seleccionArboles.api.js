@@ -25,7 +25,7 @@ export const getAllSelecciones = async () => {
 export const getSeleccionByPlantacionId = async (plantacionId) => {
   try {
     const response = await seleccionAPI.get(`/?plantacionId=${plantacionId}`);
-    console.log(response.data)
+    // console.log(response.data)
     return response.data;  // Retornamos el array final
   } catch (error) {
     console.error('Error al obtener la selección de árboles:', error.response?.data || error);

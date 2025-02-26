@@ -1,86 +1,91 @@
-/* Contenedor principal */
-.login-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    background-color: #282c34; /* Cambia esto según el color de fondo deseado */
-    color: white;
-  }
+
+.contenedor {
+
+  display: flex;
+  height: 100vh;
+  background-image: url("../img/pexels-minan1398-740584.jpg");
+  background-size: cover;
+  background-position: center;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+.caja {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 30px;
+  width: 800px;
+  height: 500px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
+  display: flex;
+  flex-direction: column;
+}
+
+.contenedor-2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.parte-izquierda {
+  flex: 1;
+  text-align: left;
+}
+
+.parte-derecha {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.imagen {
+  width: 100px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.imagen-lateral {
+  margin-top: 100px;
+  width: 300px;
+  height: auto;
+}
+
+.slogan {
+  font-size: 1.2rem;
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.google-login-button {
+  background: rgba(255, 255, 255, 0.3);
+  color: #000;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.google-login-button:hover {
+  background: rgba(255, 255, 255, 0.5);
+  transform: scale(1.05);
+}
+
+.logo{
   
-  /* Caja principal */
-  .login-box {
-    background-color: #ffffff; /* Fondo blanco para el cuadro */
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 700px; /* Ajusta el ancho del cuadro */
-    height: 450px; /* Ajusta la altura del cuadro */
-    display: flex;
-    flex-direction: row;
-  }
+  height: 25px;
+  width: 25px;
   
-  /* División interna: Flexbox para separar izquierda/derecha */
-  .login-split {
-    display: flex;
-    width: 100%;
-  }
-  
-  /* lado izquierdo */
-  .login-left {
-    flex: 1; /* Ocupa la mitad del cuadro */
-    border-right: 1px solid #ddd; /* Línea divisoria */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .side-image {
-    width: 100%; /* Imagen llena */
-    height: 100%; 
-    object-fit: cover; /* Asegura que la imagen se adapte bien */
-    border-radius: 10px 0 0 10px; 
-  }
-  
-  /* lado derecho */
-  .login-right {
-    flex: 1; /* ocupa la otra mitad del cuadro */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-  
-  .login-logo {
-    margin-bottom: 20px;
-  }
-  
-  .logo-image {
-    width: 80px; 
-    height: auto;
-  }
-  
-  .separator {
-    margin: 20px 0;
-    color: #888888;
-    font-size: 16px;
-    font-weight: bold;
-  }
-  
-  .omit-button {
-    background-color: #61dafb;
-    color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-size: 16px;
-    text-decoration: none;
-  }
-  
-  .omit-button:hover {
-    background-color: #21a1f1;
-    
-  }
-  
-  
+}

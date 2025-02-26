@@ -1,3 +1,4 @@
+import '../styles/plantacion-inicio.css';
 import React, { useEffect, useState } from 'react';
 import { getAllTasks } from '../api/plantaciones.api';
 import { Link } from 'react-router-dom';
@@ -24,7 +25,7 @@ export function PlantacionInicio() {
             <ul>
                 {plantaciones.map((plantacion) => (
                     <li key={plantacion.id}>
-                        <Link to={`/preparacion/${plantacion.id}`}>
+                        <Link to={`/gestionTareas/${plantacion.id}`}>
                             {plantacion.nombreParcela}
                         </Link>
                     </li>

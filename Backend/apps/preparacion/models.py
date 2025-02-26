@@ -22,7 +22,7 @@ class SeleccionArboles(models.Model):
         max_length=50,
         choices=VARIEDADES_CHOICES
     )
-    preparacionColinos = models.DateField(null=True, blank=True)
+    preparacionColinos = models.DateField(null=True, blank=True, default=None)
     excavacionHoyos = models.DateField(null=True, blank=True)
     plantacion = models.DateField(null=True, blank=True)
     idPlantacion = models.ForeignKey('plantaciones.Plantacion', on_delete=models.CASCADE, related_name='seleccion_arboles')

@@ -1,6 +1,6 @@
 // src/pages/PodaPage.jsx
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getPodaByPlantacionId } from '../api/poda.api';
 import { PodaForm } from '../components/podaForm';
 
@@ -8,6 +8,7 @@ export function PodaPage() {
   const { plantacionId } = useParams();
   const idPlantacion = Number(plantacionId);
   const [podas, setPodas] = useState([]);
+  const navigate = useNavigate();
 
   // Carga los registros de poda existentes
   const loadPodas = async () => {
@@ -32,6 +33,11 @@ export function PodaPage() {
   // Obtener el ID de la primera poda (si existe)
   const podaId = podas.length > 0 ? podas[0].id : null;
 
+  // Botón para ir a Preparacion terreno 
+  const handleRedirectToGestionTareas = () => {
+    navigate(`/gestionTareas/${idPlantacion}`);
+  };
+
   return (
     <div>
       <h2>Poda - Plantación {idPlantacion}</h2>
@@ -42,6 +48,22 @@ export function PodaPage() {
         podaId={podaId}
         onCreated={loadPodas}
       />
+
+      <button
+        onClick={handleRedirectToGestionTareas}
+        style={{
+          marginBottom: '16px',
+          padding: '8px 16px',
+          backgroundColor: '#007bff',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+        }}
+      >
+        Ir a Gestion tareas 
+      </button>
+
 
       {/* Historial de Podas */}
       <h3>Historial de Podas:</h3>
