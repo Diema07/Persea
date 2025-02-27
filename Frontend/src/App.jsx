@@ -9,6 +9,7 @@ import { RiegoFertilizacionPage} from './pages/riegoFertilizacion';
 import { MantenimientoMonitoreoPage } from '../src/pages/mantenimientoMonitoreo';
 import { PodaPage } from '../src/pages/poda';
 import {GestionTareasPage} from '../src/pages/gestionTareas'
+import { CosechaPage } from './pages/cosecha';
 
 
 function App() {
@@ -26,6 +27,8 @@ function App() {
         <Route path="/riego-fertilizacion/:plantacionId" element={<RiegoFertilizacionPage />} />
         <Route path="/mantenimiento-monitoreo/:plantacionId" element={<MantenimientoMonitoreoPage />} />
         <Route path="/poda/:plantacionId" element={<PodaPage />} />
+        <Route path="/cosecha/:plantacionId" element={<CosechaPage />} />
+
 
 
       </Routes>

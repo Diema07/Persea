@@ -45,12 +45,8 @@ export function GestionTareasPage() {
           <div className="estado"></div>
         </li>
         <li>
-          <Link to="/">Cosecha</Link>
+        <Link to={`/cosecha/${plantacionId}/`}>Cosecha</Link>
           <div className="estado"></div>
-        </li>
-        <li>
-          <Link to="/">Postcosecha</Link>
-          <div className="sestado"></div>
         </li>
       </ul>
 

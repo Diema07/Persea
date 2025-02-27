@@ -3,10 +3,9 @@ import { useForm } from 'react-hook-form';
 import {
   getRiegoByPlantacionId,
   postRiegoFertilizacion,
-  patchRiegoFertilizacion,
 } from '../api/riegoFertilizacion.api';
 
-export function RiegoFertilizacionForm({ plantacionId, riegoId, onCreated }) {
+export function RiegoFertilizacionForm({ plantacionId,  onCreated }) {
   const {
     register,
     handleSubmit,
@@ -123,13 +122,9 @@ export function RiegoFertilizacionForm({ plantacionId, riegoId, onCreated }) {
       // Asignar la plantación a la que pertenece
       datosParaEnviar.idPlantacion = Number(plantacionId);
 
-      if (riegoId) {
-        // Si hay un riegoId, actualizamos el registro existente (PATCH)
-        await patchRiegoFertilizacion(riegoId, datosParaEnviar);
-      } else {
         // Si no hay un riegoId, creamos un nuevo registro (POST)
-        await postRiegoFertilizacion(datosParaEnviar);
-      }
+      await postRiegoFertilizacion(datosParaEnviar);
+      
 
       // Recargar la página o ejecutar una función de callback
       if (onCreated) {
