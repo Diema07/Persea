@@ -1,5 +1,6 @@
 npm install react-router-dom
 npm install react-hook-form
+npm install swiper
 
 
 npm start

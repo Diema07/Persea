@@ -1,12 +1,24 @@
 import '../styles/plantacion-inicio.css';
+import '../styles/modalCrear.css'; 
 import React, { useEffect, useState } from 'react';
 import { getAllTasks } from '../api/plantaciones.api';
 import { Link } from 'react-router-dom';
 import { Taskcard } from './plantacion-crear'; 
+import { useForm } from 'react-hook-form';
+import { createTask } from '../api/plantaciones.api';
 
+// Importaciones de Swiper
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import { Navigation, Pagination } from 'swiper/modules';
 
 export function PlantacionInicio() {
     const [plantaciones, setPlantaciones] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar el modal
+
+    const { register, handleSubmit, formState: { errors }, reset } = useForm();
 
     useEffect(() => {
         const fetchPlantaciones = async () => {
@@ -21,21 +33,70 @@ export function PlantacionInicio() {
         fetchPlantaciones();
     }, []);
 
+    // Funciones  modal
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
+
+    // Lógica del formulario
+    const onSubmit = handleSubmit(async (data) => {
+        console.log('Datos enviados:', data);
+        try {
+            await createTask(data);
+            window.location.href = '/inicio-plantacion';
+        } catch (error) {
+            console.error('Error al crear la plantación:', error);
+        }
+    });
+
     return (
         <div className='main'>
-          <h2>Mis Plantaciones</h2>
-          <Link to="/plantacion" className="omit-button">Crear Plantación</Link>
-          <div className="contenedor1">
-          <ul>
-            {plantaciones.map((plantacion) => (
-                <li key={plantacion.id}>
-                <Taskcard task={plantacion} />
-                </li>
-            ))}
-          </ul>
-          </div>
-          
+            <div className='orden'>
+                <h2>Mis Plantaciones</h2>
+                {/* Botón que abre el modal */}
+                <button onClick={openModal} className="button">Crear Plantación</button>
+            </div>
+
+            {/* Swiper envuelve las plantaciones */}
+            <Swiper
+                modules={[Navigation, Pagination]}
+                loop={false}
+                slidesPerView={3}
+                centeredSlides={false}
+                spaceBetween={2}
+                navigation
+                pagination={{ clickable: true }}
+                className="swiper-container"
+            >
+                {plantaciones.map((plantacion) => (
+                    <SwiperSlide key={plantacion.id}>
+                        <Taskcard task={plantacion} />
+                    </SwiperSlide>
+                ))}
+            </Swiper>
+
+            {/* Modal */}
+            {isModalOpen && (
+                <div className="modal">
+                    <div className="modal-content">
+                        <h2>Nombre de tu parcela</h2>
+                        {/* Aquí está el formulario para crear la plantación dentro del modal */}
+                        <form onSubmit={onSubmit}>
+                            <input
+                                type="text"
+                                placeholder="nombre"
+                                {...register("nombreParcela", { required: true })}
+                            />
+                            {errors.nombreParcela && <span>Requerido</span>}
+                            <div className="button-container">
+                                <button type="submit">Cosechar</button>
+                                <button type="button" onClick={closeModal}>Cancelar</button>
+                            </div>
+                        </form>
+                            
+                            
+                    </div>
+                </div>
+            )}
         </div>
-      );
-      
+    );
 }

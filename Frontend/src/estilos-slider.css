@@ -1,0 +1,82 @@
+/* Establecer fondo general */
+body {
+    background-color: #acacac;
+}
+
+/* Contenedor principal centrado */
+.contenedor-principal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+/* Ajuste del contenedor del slider */
+.swiper {
+    width: 800px;
+    max-width: 1000px; /* Ajusta el tamaño del slider */
+}
+
+/* Contenedor de los slides */
+.swiper-wrapper {
+    display: flex; /* Asegura que los slides se alineen correctamente */
+}
+
+/* Estilos de cada slide */
+.swiper-slide {
+    color: black;
+    width: 400px;
+    padding: 50px 0 60px 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 8px;
+    background: linear-gradient(to right, #17aa40, #1e7c2b);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Imagen del usuario */
+.swiper-slide .user-image {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10%;
+   
+}
+
+/* Profesión */
+.swiper-slide .user-profession {
+    font-size: 1.15rem;
+    color: rgb(255, 255, 255);
+    font-weight: 500;
+    
+}
+
+/* Botón */
+.swiper-slide .message-button {
+    font-size: 1.25rem;
+    padding: 10px 35px;
+    color: #000000;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    background: #fff;
+    border: 1px solid transparent;
+    transition: 0.2s ease;
+}
+
+.swiper-slide .message-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid #fff;
+    color: #fff;
+}
+
+/* Personalización de los botones de navegación */
+.swiper-button-prev,
+.swiper-button-next {
+    color: rgb(255, 255, 255);
+}
+
+/* Estilos para la paginación */
+.swiper-pagination-bullet {
+    background: rgb(30, 255, 0);
+}
