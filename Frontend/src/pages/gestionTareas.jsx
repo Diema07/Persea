@@ -44,11 +44,20 @@ export function GestionTareasPage() {
 
           <div className="estado"></div>
         </li>
+
         <li>
         <Link to={`/cosecha/${plantacionId}/`}>Cosecha</Link>
           <div className="estado"></div>
         </li>
+
+        <li>
+        <Link to={`/informe-completo/${plantacionId}/`}>Informe</Link>
+        </li>
+        
       </ul>
+      
+
+      
 
       <button
         onClick={handleRedirectToPlantacion}

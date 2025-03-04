@@ -71,7 +71,7 @@ export function CosechaPage() {
             <li key={c.id}>
               <strong>ID:</strong> {c.id} <br />
               <strong>Fecha de Cosecha:</strong> {c.fechaCosecha || '---'} <br />
-              <strong>Cantidad Cosechada:</strong> {c.cantidadCosechada || 0} kg<br />
+              <strong>Total Cosecha :</strong> {c.cantidadCosechada || 0} kg<br />
               <strong>Calidad Exportación:</strong> {c.kilosCalidadExportacion || 0} kg <br />
               <strong>Calidad Nacional:</strong> {c.kilosCalidadNacional || 0} kg <br />
               <strong>Calidad Industrial:</strong> {c.kilosCalidadIndustrial || 0} kg <br />

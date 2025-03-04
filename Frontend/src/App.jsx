@@ -10,6 +10,8 @@ import { MantenimientoMonitoreoPage } from '../src/pages/mantenimientoMonitoreo'
 import { PodaPage } from '../src/pages/poda';
 import {GestionTareasPage} from '../src/pages/gestionTareas'
 import { CosechaPage } from './pages/cosecha';
+import { InformeCompletoPage } from './pages/informe';
+
 
 
 function App() {
@@ -28,6 +30,8 @@ function App() {
         <Route path="/mantenimiento-monitoreo/:plantacionId" element={<MantenimientoMonitoreoPage />} />
         <Route path="/poda/:plantacionId" element={<PodaPage />} />
         <Route path="/cosecha/:plantacionId" element={<CosechaPage />} />
+        <Route path="/informe-completo/:plantacionId" element={<InformeCompletoPage />} />
+
 
 
 
