@@ -14,12 +14,12 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Informe',
+            name='Notificacion',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('tipoInforme', models.CharField(max_length=50)),
-                ('fechaGeneracion', models.DateField()),
-                ('idPlantacion', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='informes', to='plantaciones.plantacion')),
+                ('tipoNotificacion', models.CharField(max_length=50)),
+                ('fechaNotificacion', models.DateField()),
+                ('idPlantacion', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='notificaciones', to='plantaciones.plantacion')),
             ],
         ),
     ]

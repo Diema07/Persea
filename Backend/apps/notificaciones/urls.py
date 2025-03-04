@@ -1,6 +1,10 @@
-from django.urls import path
-from . import views
+from django.urls import path, include
+from rest_framework import routers
+from apps.notificaciones import views
+
+router = routers.DefaultRouter()
+router.register(r'Notificacion', views.NotificacionView, 'Notificacion')
 
 urlpatterns = [
-    path('enviar/', views.enviar_notificaciones_view, name='enviar_notificaciones_view'),
+    path("api/v1/", include(router.urls))
 ]

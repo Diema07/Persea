@@ -1,8 +1,9 @@
-# notificaciones/views.py
-from django.http import HttpResponse
-from .tasks import enviar_notificaciones_task
+from django.shortcuts import render
+from rest_framework import viewsets
+from .serializer import NotificacionSerializer
+from .models import Notificacion
 
-def enviar_notificaciones_view(request):
-    # Llama a la tarea de Celery de forma asíncrona
-    enviar_notificaciones_task.delay()
-    return HttpResponse("Tarea de envío de notificaciones lanzada.")
+# Create your views here.
+class NotificacionView(viewsets.ModelViewSet):
+    serializer_class = NotificacionSerializer
+    queryset = Notificacion.objects.all()
